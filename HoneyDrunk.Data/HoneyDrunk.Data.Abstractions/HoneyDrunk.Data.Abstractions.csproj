@@ -8,10 +8,10 @@
 
     <!-- Package Metadata -->
     <PackageId>HoneyDrunk.Data.Abstractions</PackageId>
-    <Version>0.1.0</Version>
+    <Version>0.2.0</Version>
     <Authors>HoneyDrunk Studios</Authors>
-    <Description>Persistence abstractions for HoneyDrunk.OS Grid. Defines contracts for repositories, unit of work, transactions, multi-tenant data access, and health diagnostics. Provider-agnostic with no EF Core or database-specific dependencies.</Description>
-    <PackageReleaseNotes>v0.1.0: Initial release with repository, unit of work, transaction, tenancy, and diagnostics contracts.</PackageReleaseNotes>
+    <Description>Persistence abstractions for HoneyDrunk.OS Grid. Complete architecture overhaul with contracts for repositories, unit of work, transactions, multi-tenant data access, and health diagnostics. Provider-agnostic with no EF Core or database-specific dependencies.</Description>
+    <PackageReleaseNotes>v0.2.0: Architecture overhaul with improved repository contracts, transaction scope, tenant resolution strategies, and comprehensive diagnostics.</PackageReleaseNotes>
     <PackageTags>data;persistence;repository;unit-of-work;transactions;multi-tenant;abstractions;contracts;kernel;grid</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>

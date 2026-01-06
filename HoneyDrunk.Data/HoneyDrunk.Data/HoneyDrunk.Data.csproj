@@ -8,10 +8,10 @@
 
     <!-- Package Metadata -->
     <PackageId>HoneyDrunk.Data</PackageId>
-    <Version>0.1.0</Version>
+    <Version>0.2.0</Version>
     <Authors>HoneyDrunk Studios</Authors>
-    <Description>Provider-neutral persistence orchestration layer for HoneyDrunk.OS Grid. Integrates with HoneyDrunk.Kernel for tenant resolution, correlation tracking, and telemetry enrichment. Does not depend on any specific database provider.</Description>
-    <PackageReleaseNotes>v0.1.0: Initial release with Kernel integration, tenant accessor, diagnostics context, and DI registration helpers.</PackageReleaseNotes>
+    <Description>Provider-neutral persistence orchestration layer for HoneyDrunk.OS Grid. Complete architecture overhaul with Kernel integration for tenant resolution, correlation tracking, and telemetry enrichment. Does not depend on any specific database provider.</Description>
+    <PackageReleaseNotes>v0.2.0: Architecture overhaul with enhanced Kernel integration, improved tenant accessor, diagnostics context, and comprehensive documentation.</PackageReleaseNotes>
     <PackageTags>data;persistence;orchestration;multi-tenant;telemetry;correlation;kernel;grid</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>

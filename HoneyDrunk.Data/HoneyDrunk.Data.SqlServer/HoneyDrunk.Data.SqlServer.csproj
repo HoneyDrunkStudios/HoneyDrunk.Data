@@ -8,10 +8,10 @@
 
     <!-- Package Metadata -->
     <PackageId>HoneyDrunk.Data.SqlServer</PackageId>
-    <Version>0.1.0</Version>
+    <Version>0.2.0</Version>
     <Authors>HoneyDrunk Studios</Authors>
-    <Description>SQL Server specialization for HoneyDrunk.Data. Provides SQL Server and Azure SQL configuration, model conventions, retry-on-failure support, and enhanced health diagnostics.</Description>
-    <PackageReleaseNotes>v0.1.0: Initial release with SQL Server and Azure SQL registration, model conventions, and health contributors.</PackageReleaseNotes>
+    <Description>SQL Server specialization for HoneyDrunk.Data. Complete architecture overhaul with SQL Server and Azure SQL configuration, model conventions, retry-on-failure support, and enhanced health diagnostics.</Description>
+    <PackageReleaseNotes>v0.2.0: Architecture overhaul with improved SQL Server and Azure SQL registration, datetime2/decimal conventions, and enhanced health contributors.</PackageReleaseNotes>
     <PackageTags>data;persistence;sql-server;azure-sql;entity-framework;ef-core;conventions;kernel;grid</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>

@@ -8,10 +8,10 @@
 
     <!-- Package Metadata -->
     <PackageId>HoneyDrunk.Data.EntityFramework</PackageId>
-    <Version>0.1.0</Version>
+    <Version>0.2.0</Version>
     <Authors>HoneyDrunk Studios</Authors>
-    <Description>Entity Framework Core provider implementation for HoneyDrunk.Data. Provides tenant-aware DbContext, repository pattern, unit of work, command interceptors for correlation tracking, and health contributors.</Description>
-    <PackageReleaseNotes>v0.1.0: Initial release with HoneyDrunkDbContext, EfRepository, EfUnitOfWork, correlation interceptor, and health contributors.</PackageReleaseNotes>
+    <Description>Entity Framework Core provider implementation for HoneyDrunk.Data. Complete architecture overhaul with tenant-aware DbContext, repository pattern, unit of work, command interceptors for correlation tracking, and health contributors.</Description>
+    <PackageReleaseNotes>v0.2.0: Architecture overhaul with improved HoneyDrunkDbContext, EfRepository, EfUnitOfWork, correlation interceptor, and model builder conventions.</PackageReleaseNotes>
     <PackageTags>data;persistence;entity-framework;ef-core;repository;unit-of-work;multi-tenant;correlation;kernel;grid</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
