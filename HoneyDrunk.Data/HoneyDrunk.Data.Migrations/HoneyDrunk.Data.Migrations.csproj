@@ -8,10 +8,10 @@
 
     <!-- Package Metadata -->
     <PackageId>HoneyDrunk.Data.Migrations</PackageId>
-    <Version>0.1.0</Version>
+    <Version>0.2.0</Version>
     <Authors>HoneyDrunk Studios</Authors>
-    <Description>Migration tooling for HoneyDrunk.Data. Provides design-time DbContext factories and migration runner helpers for CI/CD scenarios. Not intended for runtime use.</Description>
-    <PackageReleaseNotes>v0.1.0: Initial release with MigrationDbContextFactory and MigrationRunner helpers.</PackageReleaseNotes>
+    <Description>Migration tooling for HoneyDrunk.Data. Complete architecture overhaul with design-time DbContext factories and migration runner helpers for CI/CD scenarios. Not intended for runtime use.</Description>
+    <PackageReleaseNotes>v0.2.0: Architecture overhaul with improved MigrationDbContextFactory and MigrationRunner helpers.</PackageReleaseNotes>
     <PackageTags>data;persistence;migrations;ef-core;entity-framework;tooling;ci-cd;kernel;grid</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
