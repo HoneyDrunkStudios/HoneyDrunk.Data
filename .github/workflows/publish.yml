@@ -1,0 +1,145 @@
+﻿name: Publish to NuGet
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to publish (without v prefix, e.g., 0.1.0)'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+  packages: write
+  id-token: write
+
+jobs:
+  prepare:
+    name: Prepare Release
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.get_version.outputs.version }}
+      version-tag: ${{ steps.get_version.outputs.version-tag }}
+    steps:
+      - name: Determine version
+        id: get_version
+        shell: bash
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            VERSION="${{ github.event.inputs.version }}"
+            VERSION_TAG="v${VERSION}"
+          else
+            VERSION="${GITHUB_REF#refs/tags/v}"
+            VERSION_TAG="${GITHUB_REF#refs/tags/}"
+          fi
+          echo "version=$VERSION" >>"$GITHUB_OUTPUT"
+          echo "version-tag=$VERSION_TAG" >>"$GITHUB_OUTPUT"
+          echo "Publishing version: $VERSION"
+          echo "Publishing tag: $VERSION_TAG"
+
+  release:
+    name: Build, Pack & Publish
+    needs: prepare
+    uses: HoneyDrunkStudios/HoneyDrunk.Actions/.github/workflows/release.yml@main
+    with:
+      dotnet-version: '10.0.x'
+      configuration: 'Release'
+      runs-on: 'ubuntu-latest'
+      project-path: 'HoneyDrunk.Data/HoneyDrunk.Data.slnx'
+      enable-nuget-publish: true
+      nuget-source: 'https://api.nuget.org/v3/index.json'
+      actions-ref: 'main'
+    secrets:
+      nuget-api-key: ${{ secrets.NUGET_API_KEY }}
+
+  github-release:
+    name: Create GitHub Release
+    needs: [prepare, release]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ needs.prepare.outputs.version-tag }}
+          name: HoneyDrunk.Data ${{ needs.prepare.outputs.version-tag }}
+          body: |
+            ## HoneyDrunk.Data ${{ needs.prepare.outputs.version-tag }}
+
+            Persistence layer for HoneyDrunk.OS with multi-tenant data access, repository patterns, and Entity Framework Core integration.
+
+            ### 📦 Packages
+
+            **HoneyDrunk.Data.Abstractions** - Core persistence contracts (provider-agnostic)
+
+            ```xml
+            <PackageReference Include="HoneyDrunk.Data.Abstractions" Version="${{ needs.prepare.outputs.version }}" />
+            ```
+
+            **HoneyDrunk.Data** - Orchestration layer with Kernel integration
+
+            ```xml
+            <PackageReference Include="HoneyDrunk.Data" Version="${{ needs.prepare.outputs.version }}" />
+            ```
+
+            **HoneyDrunk.Data.EntityFramework** - Entity Framework Core provider
+
+            ```xml
+            <PackageReference Include="HoneyDrunk.Data.EntityFramework" Version="${{ needs.prepare.outputs.version }}" />
+            ```
+
+            **HoneyDrunk.Data.SqlServer** - SQL Server specialization
+
+            ```xml
+            <PackageReference Include="HoneyDrunk.Data.SqlServer" Version="${{ needs.prepare.outputs.version }}" />
+            ```
+
+            **HoneyDrunk.Data.Migrations** - Migration tooling for CI/CD
+
+            ```xml
+            <PackageReference Include="HoneyDrunk.Data.Migrations" Version="${{ needs.prepare.outputs.version }}" />
+            ```
+
+            ### 🔗 Links
+            - [NuGet: HoneyDrunk.Data.Abstractions](https://www.nuget.org/packages/HoneyDrunk.Data.Abstractions/${{ needs.prepare.outputs.version }})
+            - [NuGet: HoneyDrunk.Data](https://www.nuget.org/packages/HoneyDrunk.Data/${{ needs.prepare.outputs.version }})
+            - [NuGet: HoneyDrunk.Data.EntityFramework](https://www.nuget.org/packages/HoneyDrunk.Data.EntityFramework/${{ needs.prepare.outputs.version }})
+            - [NuGet: HoneyDrunk.Data.SqlServer](https://www.nuget.org/packages/HoneyDrunk.Data.SqlServer/${{ needs.prepare.outputs.version }})
+            - [NuGet: HoneyDrunk.Data.Migrations](https://www.nuget.org/packages/HoneyDrunk.Data.Migrations/${{ needs.prepare.outputs.version }})
+            - [Documentation](https://github.com/HoneyDrunkStudios/HoneyDrunk.Data#readme)
+
+            ### 🚀 Quick Start
+
+            ```csharp
+            using HoneyDrunk.Data.Registration;
+            using HoneyDrunk.Data.SqlServer.Registration;
+
+            var builder = WebApplication.CreateBuilder(args);
+
+            // Register Kernel services
+            builder.Services.AddHoneyDrunkGrid(options =>
+            {
+                options.NodeId = "data-node";
+                options.StudioId = "demo-studio";
+            });
+
+            // Register Data layer with SQL Server
+            builder.Services.AddHoneyDrunkData();
+            builder.Services.AddHoneyDrunkDataSqlServer<MyDbContext>(sqlOptions =>
+            {
+                sqlOptions.ConnectionString = builder.Configuration.GetConnectionString("Default");
+                sqlOptions.EnableRetryOnFailure = true;
+            });
+
+            var app = builder.Build();
+            app.Run();
+            ```
+          draft: false
+          prerelease: false

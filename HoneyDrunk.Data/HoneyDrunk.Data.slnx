@@ -1,0 +1,17 @@
+<Solution>
+  <Folder Name="/Docs/">
+    <File Path="../README.md" />
+  </Folder>
+  <Folder Name="/Docs/FileGuide/" />
+  <Folder Name="/Pipelines/">
+    <File Path="../.github/workflows/publish.yml" />
+    <File Path="../.github/workflows/validate-pr.yml" />
+  </Folder>
+  <Project Path="HoneyDrunk.Data.Abstractions/HoneyDrunk.Data.Abstractions.csproj" />
+  <Project Path="HoneyDrunk.Data.EntityFramework/HoneyDrunk.Data.EntityFramework.csproj" />
+  <Project Path="HoneyDrunk.Data.Migrations/HoneyDrunk.Data.Migrations.csproj" />
+  <Project Path="HoneyDrunk.Data.SqlServer/HoneyDrunk.Data.SqlServer.csproj" />
+  <Project Path="HoneyDrunk.Data.Testing/HoneyDrunk.Data.Testing.csproj" />
+  <Project Path="HoneyDrunk.Data.Tests/HoneyDrunk.Data.Tests.csproj" />
+  <Project Path="HoneyDrunk.Data/HoneyDrunk.Data.csproj" />
+</Solution>
