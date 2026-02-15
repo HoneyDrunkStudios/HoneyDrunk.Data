@@ -174,6 +174,22 @@ public sealed class EfOutboxReaderTests : IAsyncDisposable
         Assert.Null(updated.LeasedUntil);
     }
 
+    [Theory]
+    [InlineData(OutboxMessageStatus.Pending)]
+    [InlineData(OutboxMessageStatus.Dispatched)]
+    [InlineData(OutboxMessageStatus.DeadLetter)]
+    public async Task MarkDispatchedAsync_FromNonLeasedState_IsNoOp(OutboxMessageStatus initialStatus)
+    {
+        var message = await SeedMessage(initialStatus);
+
+        await _reader.MarkDispatchedAsync(message.Id);
+        _context.ChangeTracker.Clear();
+
+        var updated = await _context.OutboxMessages.FindAsync(message.Id);
+        Assert.NotNull(updated);
+        Assert.Equal(initialStatus, updated.Status);
+    }
+
     // --- ReleaseForRetryAsync ---
     [Fact]
     public async Task ReleaseForRetryAsync_TransitionsToPendingWithRetryData()
@@ -193,6 +209,23 @@ public sealed class EfOutboxReaderTests : IAsyncDisposable
         Assert.Equal("Timeout", updated.LastError);
     }
 
+    [Theory]
+    [InlineData(OutboxMessageStatus.Pending)]
+    [InlineData(OutboxMessageStatus.Dispatched)]
+    [InlineData(OutboxMessageStatus.DeadLetter)]
+    public async Task ReleaseForRetryAsync_FromNonLeasedState_IsNoOp(OutboxMessageStatus initialStatus)
+    {
+        var message = await SeedMessage(initialStatus);
+        var nextAttempt = DateTimeOffset.UtcNow.AddSeconds(30);
+
+        await _reader.ReleaseForRetryAsync(message.Id, retryCount: 1, nextAttemptAt: nextAttempt, lastError: "Error");
+        _context.ChangeTracker.Clear();
+
+        var updated = await _context.OutboxMessages.FindAsync(message.Id);
+        Assert.NotNull(updated);
+        Assert.Equal(initialStatus, updated.Status);
+    }
+
     // --- DeadLetterAsync ---
     [Fact]
     public async Task DeadLetterAsync_TransitionsToDeadLetter()
@@ -207,6 +240,22 @@ public sealed class EfOutboxReaderTests : IAsyncDisposable
         Assert.Equal(OutboxMessageStatus.DeadLetter, updated.Status);
         Assert.Null(updated.LeasedUntil);
         Assert.Equal("Max retries exceeded", updated.LastError);
+    }
+
+    [Theory]
+    [InlineData(OutboxMessageStatus.Pending)]
+    [InlineData(OutboxMessageStatus.Dispatched)]
+    [InlineData(OutboxMessageStatus.DeadLetter)]
+    public async Task DeadLetterAsync_FromNonLeasedState_IsNoOp(OutboxMessageStatus initialStatus)
+    {
+        var message = await SeedMessage(initialStatus);
+
+        await _reader.DeadLetterAsync(message.Id, lastError: "Should not apply");
+        _context.ChangeTracker.Clear();
+
+        var updated = await _context.OutboxMessages.FindAsync(message.Id);
+        Assert.NotNull(updated);
+        Assert.Equal(initialStatus, updated.Status);
     }
 
     // --- CleanupDispatchedAsync ---

@@ -93,13 +93,18 @@ public sealed class EfOutboxReader<TContext>(
     /// <inheritdoc />
     public async Task MarkDispatchedAsync(Guid messageId, CancellationToken cancellationToken = default)
     {
-        await _dbContext.Set<OutboxMessage>()
-            .Where(m => m.Id == messageId)
+        var affected = await _dbContext.Set<OutboxMessage>()
+            .Where(m => m.Id == messageId && m.Status == OutboxMessageStatus.Leased)
             .ExecuteUpdateAsync(
                 s => s
                     .SetProperty(m => m.Status, OutboxMessageStatus.Dispatched)
                     .SetProperty(m => m.LeasedUntil, (DateTimeOffset?)null),
                 cancellationToken);
+
+        if (affected == 0)
+        {
+            Log.OutboxStateTransitionSkipped(_logger, messageId, OutboxMessageStatus.Dispatched);
+        }
     }
 
     /// <inheritdoc />
@@ -110,8 +115,8 @@ public sealed class EfOutboxReader<TContext>(
         string? lastError = null,
         CancellationToken cancellationToken = default)
     {
-        await _dbContext.Set<OutboxMessage>()
-            .Where(m => m.Id == messageId)
+        var affected = await _dbContext.Set<OutboxMessage>()
+            .Where(m => m.Id == messageId && m.Status == OutboxMessageStatus.Leased)
             .ExecuteUpdateAsync(
                 s => s
                     .SetProperty(m => m.Status, OutboxMessageStatus.Pending)
@@ -120,6 +125,11 @@ public sealed class EfOutboxReader<TContext>(
                     .SetProperty(m => m.LeasedUntil, (DateTimeOffset?)null)
                     .SetProperty(m => m.LastError, lastError),
                 cancellationToken);
+
+        if (affected == 0)
+        {
+            Log.OutboxStateTransitionSkipped(_logger, messageId, OutboxMessageStatus.Pending);
+        }
     }
 
     /// <inheritdoc />
@@ -128,14 +138,19 @@ public sealed class EfOutboxReader<TContext>(
         string? lastError = null,
         CancellationToken cancellationToken = default)
     {
-        await _dbContext.Set<OutboxMessage>()
-            .Where(m => m.Id == messageId)
+        var affected = await _dbContext.Set<OutboxMessage>()
+            .Where(m => m.Id == messageId && m.Status == OutboxMessageStatus.Leased)
             .ExecuteUpdateAsync(
                 s => s
                     .SetProperty(m => m.Status, OutboxMessageStatus.DeadLetter)
                     .SetProperty(m => m.LeasedUntil, (DateTimeOffset?)null)
                     .SetProperty(m => m.LastError, lastError),
                 cancellationToken);
+
+        if (affected == 0)
+        {
+            Log.OutboxStateTransitionSkipped(_logger, messageId, OutboxMessageStatus.DeadLetter);
+        }
     }
 
     /// <inheritdoc />
