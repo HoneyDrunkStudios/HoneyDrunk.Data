@@ -45,16 +45,9 @@ public static class TestDoubles
         return new TestDataDiagnosticsContext(correlationId, operationId, nodeId);
     }
 
-    private sealed class TestTenantAccessor : ITenantAccessor
+    private sealed class TestTenantAccessor(TenantId tenantId) : ITenantAccessor
     {
-        private readonly TenantId _tenantId;
-
-        public TestTenantAccessor(TenantId tenantId)
-        {
-            _tenantId = tenantId;
-        }
-
-        public TenantId GetCurrentTenantId() => _tenantId;
+        public TenantId GetCurrentTenantId() => tenantId;
     }
 
     private sealed class TestDataDiagnosticsContext : IDataDiagnosticsContext
@@ -67,7 +60,7 @@ public static class TestDoubles
             OperationId = operationId;
             NodeId = nodeId;
 
-            _tags = new Dictionary<string, string>();
+            _tags = [];
             if (!string.IsNullOrEmpty(correlationId))
             {
                 _tags["correlation.id"] = correlationId;

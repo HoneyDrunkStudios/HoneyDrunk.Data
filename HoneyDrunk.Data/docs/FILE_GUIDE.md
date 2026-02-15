@@ -62,6 +62,12 @@ This guide is organized into focused documents by domain:
 |--------|----------|-------------|
 | 🧪 **Testing** | [Testing.md](Testing.md) | SQLite test helpers (convenience utilities, not behavioral mirrors of production providers) |
 
+### 🔷 HoneyDrunk.Data.Outbox
+
+| Domain | Document | Description |
+|--------|----------|-------------|
+| 📤 **Outbox** | [Outbox.md](Outbox.md) | Transactional outbox pattern with lease-based dispatch |
+
 ---
 
 ## 🔷 Quick Start
@@ -110,6 +116,10 @@ dotnet add package HoneyDrunk.Data.EntityFramework
 
 # Or abstractions only (for libraries)
 dotnet add package HoneyDrunk.Data.Abstractions
+
+# Transactional outbox
+dotnet add package HoneyDrunk.Data.Outbox               # EF Core persistence
+dotnet add package HoneyDrunk.Data.Outbox.Dispatcher     # Background dispatch via Transport
 ```
 
 ### Basic Usage
@@ -284,8 +294,33 @@ HoneyDrunk.Data/
 │   │   └── MigrationDbContextFactory.cs # Design-time factory
 │   └── Helpers/
 │       └── MigrationRunner.cs          # Programmatic migration runner
+│├── HoneyDrunk.Data.Outbox.Abstractions/ # Outbox contracts (no EF, no Transport)
+│   ├── IOutboxWriter.cs                 # Write messages within a transaction
+│   ├── IOutboxReader.cs                 # Claim batches with lease-based concurrency
+│   ├── IOutboxDispatcher.cs              # Dispatch trigger interface
+│   ├── OutboxMessage.cs                  # Message model (Id, Type, Payload, LeasedUntil, LastError)
+│   ├── OutboxMessageStatus.cs            # Pending → Leased → Dispatched / DeadLetter
+│   ├── OutboxOptions.cs                  # Schema, table, lease duration, enrichment config
+│   └── OutboxHeaderNames.cs              # Well-known header keys
 │
-└── HoneyDrunk.Data.Testing/            # Test helpers (convenience, not behavioral parity)
+├── HoneyDrunk.Data.Outbox/             # EF Core outbox persistence
+│   ├── Configuration/
+│   │   └── OutboxMessageConfiguration.cs # Entity type config (table, indexes, concurrency token)
+│   ├── Persistence/
+│   │   ├── EfOutboxWriter.cs            # Adds messages to EF change tracker
+│   │   └── EfOutboxReader.cs            # Lease-based batch claim with CAS
+│   ├── Serialization/
+│   │   └── OutboxHeaderSerializer.cs    # System.Text.Json header serialization
+│   ├── Registration/
+│   │   └── ServiceCollectionExtensions.cs # AddHoneyDrunkDataOutbox<T>()
+│   └── ModelBuilderExtensions.cs        # ApplyOutboxConfiguration()
+│
+├── HoneyDrunk.Data.Outbox.Dispatcher/  # Background outbox dispatcher
+│   ├── OutboxDispatcherService.cs        # BackgroundService poll/claim/publish loop
+│   ├── OutboxDispatcherOptions.cs        # Batch size, poll interval, lease, retry config
+│   └── Registration/
+│       └── ServiceCollectionExtensions.cs # AddOutboxDispatcher()
+│└── HoneyDrunk.Data.Testing/            # Test helpers (convenience, not behavioral parity)
     ├── Factories/
     │   └── SqliteTestDbContextFactory.cs # SQLite in-memory factory
     ├── Fixtures/
@@ -330,6 +365,15 @@ HoneyDrunk.Data/
 - `SqlServerHealthContributor<T>` with enhanced SQL Server diagnostics
 - Contributors are invoked by the host on demand; Data does not monitor or poll
 
+### Transactional Outbox
+- Three-package architecture: Abstractions (contracts), Outbox (EF persistence), Dispatcher (Transport bridge)
+- Lease-based state machine: `Pending → Leased → Dispatched`, with `DeadLetter` for exhausted retries
+- `IOutboxWriter` writes messages within the same `SaveChangesAsync` as domain state
+- `EfOutboxReader<T>` claims batches with per-message CAS and expired-lease recovery
+- `OutboxDispatcherService` polls and publishes via `ITransportPublisher` with configurable retry
+- `LeasedUntil` and `LastError` columns for operational visibility
+- Automatic `CorrelationId` and `TenantId` enrichment from Kernel context
+
 ### SQL Server Support
 - `AddHoneyDrunkDataSqlServer<T>()` for SQL Server
 - `AddHoneyDrunkDataAzureSql<T>()` for Azure SQL
@@ -372,6 +416,20 @@ HoneyDrunk.Data/
 - `HoneyDrunk.Data.SqlServer` - SQL Server support
 - `Microsoft.EntityFrameworkCore.Design` - Design-time tooling
 
+**HoneyDrunk.Data.Outbox.Abstractions:**
+- (none — standalone contracts)
+
+**HoneyDrunk.Data.Outbox:**
+- `HoneyDrunk.Data.Outbox.Abstractions` - Outbox contracts
+- `HoneyDrunk.Kernel.Abstractions` - Context enrichment
+- `Microsoft.EntityFrameworkCore` - Persistence
+
+**HoneyDrunk.Data.Outbox.Dispatcher:**
+- `HoneyDrunk.Data.Outbox.Abstractions` - Reader/dispatcher contracts
+- `HoneyDrunk.Data.Outbox` - Header serialization
+- `HoneyDrunk.Transport` - Publisher abstractions
+- `Microsoft.Extensions.Hosting.Abstractions` - BackgroundService
+
 **HoneyDrunk.Data.Testing:**
 - `HoneyDrunk.Data.EntityFramework` - EF Core provider
 - `Microsoft.EntityFrameworkCore.Sqlite` - SQLite provider
@@ -382,8 +440,9 @@ HoneyDrunk.Data/
 Applications using HoneyDrunk.Data:
 - **API Services** - CRUD operations with repository pattern
 - **Grid Nodes** - Tenant-aware data access (per-node persistence)
-- **Background Services** - Unit of work for batch operations
+- **Background Services** - Unit of work for batch operations, outbox dispatcher
 - **Multi-tenant Services** - Tenant-aware data access with configured resolution strategy
+- **Event-driven Services** - Transactional outbox for reliable event publishing
 
 ---
 
@@ -395,6 +454,7 @@ Applications using HoneyDrunk.Data:
 
 ### Related Projects
 - [HoneyDrunk.Kernel](https://github.com/HoneyDrunkStudios/HoneyDrunk.Kernel) - Core Grid primitives (required)
+- [HoneyDrunk.Transport](https://github.com/HoneyDrunkStudios/HoneyDrunk.Transport) - Messaging (required by Outbox.Dispatcher)
 - [HoneyDrunk.Standards](https://github.com/HoneyDrunkStudios/HoneyDrunk.Standards) - Analyzers and conventions
 
 ### External References
@@ -410,5 +470,5 @@ Applications using HoneyDrunk.Data:
 
 ---
 
-*Last Updated: 2026-01-01*  
+*Last Updated: 2026-02-15*
 *Target Framework: .NET 10.0*

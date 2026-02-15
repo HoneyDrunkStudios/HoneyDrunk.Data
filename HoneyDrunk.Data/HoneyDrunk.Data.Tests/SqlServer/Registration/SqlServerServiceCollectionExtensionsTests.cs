@@ -40,8 +40,8 @@ public sealed class SqlServerServiceCollectionExtensionsTests
 
         var provider = services.BuildServiceProvider();
 
-        Assert.Throws<InvalidOperationException>(() =>
-            provider.GetRequiredService<TestDbContext>());
+        Assert.Throws<InvalidOperationException>(
+            provider.GetRequiredService<TestDbContext>);
     }
 
     [Fact]
@@ -102,8 +102,8 @@ public sealed class SqlServerServiceCollectionExtensionsTests
 
         var provider = services.BuildServiceProvider();
 
-        Assert.Throws<InvalidOperationException>(() =>
-            provider.GetRequiredService<TestDbContext>());
+        Assert.Throws<InvalidOperationException>(
+            provider.GetRequiredService<TestDbContext>);
     }
 
     [Fact]

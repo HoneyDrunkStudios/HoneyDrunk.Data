@@ -17,17 +17,17 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="coverlet.collector" Version="6.0.4">
+    <PackageReference Include="coverlet.collector" Version="8.0.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="HoneyDrunk.Kernel.Abstractions" Version="0.3.0" />
+    <PackageReference Include="HoneyDrunk.Kernel.Abstractions" Version="0.4.0" />
     <PackageReference Include="HoneyDrunk.Standards" Version="0.2.6">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="10.0.1" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="10.0.3" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.3" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
     <PackageReference Include="NSubstitute" Version="5.3.0" />
     <PackageReference Include="xunit" Version="2.9.3" />
@@ -41,6 +41,9 @@
     <ProjectReference Include="..\HoneyDrunk.Data.Abstractions\HoneyDrunk.Data.Abstractions.csproj" />
     <ProjectReference Include="..\HoneyDrunk.Data\HoneyDrunk.Data.csproj" />
     <ProjectReference Include="..\HoneyDrunk.Data.EntityFramework\HoneyDrunk.Data.EntityFramework.csproj" />
+    <ProjectReference Include="..\HoneyDrunk.Data.Outbox.Abstractions\HoneyDrunk.Data.Outbox.Abstractions.csproj" />
+    <ProjectReference Include="..\HoneyDrunk.Data.Outbox\HoneyDrunk.Data.Outbox.csproj" />
+    <ProjectReference Include="..\HoneyDrunk.Data.Outbox.Dispatcher\HoneyDrunk.Data.Outbox.Dispatcher.csproj" />
     <ProjectReference Include="..\HoneyDrunk.Data.SqlServer\HoneyDrunk.Data.SqlServer.csproj" />
     <ProjectReference Include="..\HoneyDrunk.Data.Migrations\HoneyDrunk.Data.Migrations.csproj" />
     <ProjectReference Include="..\HoneyDrunk.Data.Testing\HoneyDrunk.Data.Testing.csproj" />
@@ -49,6 +52,10 @@
   <ItemGroup>
     <Using Include="Xunit" />
     <Using Include="NSubstitute" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Update="Microsoft.CodeAnalysis.NetAnalyzers" Version="10.0.103" />
   </ItemGroup>
 
 </Project>

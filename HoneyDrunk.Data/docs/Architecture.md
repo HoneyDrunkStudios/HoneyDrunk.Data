@@ -107,6 +107,23 @@ HoneyDrunk.Data follows a layered architecture with clear separation between abs
 │                            Database Layer                                    │
 │                    (SQL Server, Azure SQL, etc.)                            │
 └─────────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                    Transactional Outbox (Parallel Track)                     │
+│                                                                              │
+│  ┌───────────────────────┐  ┌──────────────────────┐  ┌───────────────────────┐ │
+│  │ Outbox.Abstractions  │  │  Outbox (EF Core)   │  │ Outbox.Dispatcher     │ │
+│  │                       │  │                      │  │                       │ │
+│  │ IOutboxWriter         │  │ EfOutboxWriter<T>    │  │ OutboxDispatcher...   │ │
+│  │ IOutboxReader          │  │ EfOutboxReader<T>    │  │ OutboxDispatcher...   │ │
+│  │ IOutboxDispatcher     │  │ OutboxMessageConfig  │  │ AddOutboxDispatcher() │ │
+│  │ OutboxMessage          │  │ OutboxHeaderSer...   │  │                       │ │
+│  │ OutboxMessageStatus   │  │ ApplyOutboxConfig()  │  │ Deps: Transport,      │ │
+│  │                       │  │                      │  │   Hosting              │ │
+│  │ Deps: (none)          │  │ Deps: Kernel.Abs,    │  │                       │ │
+│  │                       │  │   EF Core             │  │                       │ │
+│  └───────────────────────┘  └──────────────────────┘  └───────────────────────┘ │
+└─────────────────────────────────────────────────────────────────────────────┘
 ```
 
 ---
@@ -160,7 +177,21 @@ HoneyDrunk.Data follows a layered architecture with clear separation between abs
 │ (Microsoft.EntityFrameworkCore.     │     Behavioral parity with prod
 │          Sqlite + xUnit)            │     is NOT guaranteed
 └─────────────────────────────────────┘
-```
+┌──────────────────────────────────────────────────────────┐
+│       Transactional Outbox (Parallel Track)            │
+└──────────────────────────────────────────────────────────┘
+                    │
+┌───────────────────┐
+│ Outbox.Abstractions │ ◄── Standalone contracts (no deps)
+└───────────────────┘
+                    │
+┌───────────────────┐
+│ Outbox (EF Core)    │ ◄── Persistence (+ Kernel.Abstractions)
+└───────────────────┘
+                    │
+┌───────────────────┐
+│ Outbox.Dispatcher   │ ◄── Background dispatch (+ Transport)
+└───────────────────┘```
 
 ---
 
@@ -288,6 +319,8 @@ builder.Services.AddHoneyDrunkDataSqlServer<AppDbContext>(sqlOptions => { /* ...
 | `AddHoneyDrunkDataEntityFramework<T>()` | `AddHoneyDrunkData()` services | `DbContext`, `IUnitOfWork<T>`, interceptors, health contributors |
 | `AddHoneyDrunkDataSqlServer<T>()` | `AddHoneyDrunkData()` services | Same as EF + SQL Server configuration |
 | `AddHoneyDrunkDataAzureSql<T>()` | `AddHoneyDrunkData()` services | Same as EF + Azure SQL configuration |
+| `AddHoneyDrunkDataOutbox<T>()` | EF Core DbContext | `IOutboxWriter`, `IOutboxReader`, outbox entity configuration |
+| `AddOutboxDispatcher()` | `IOutboxReader`, `ITransportPublisher` | `OutboxDispatcherService`, `OutboxDispatcherOptions` |
 
 ### Implicit vs Explicit Registration
 

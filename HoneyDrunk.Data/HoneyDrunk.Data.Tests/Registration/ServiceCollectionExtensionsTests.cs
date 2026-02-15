@@ -108,7 +108,7 @@ public sealed class ServiceCollectionExtensionsTests
         services.AddHoneyDrunkData();
 
         var ex = Assert.Throws<InvalidOperationException>(
-            () => services.ValidateHoneyDrunkDataRegistration());
+            services.ValidateHoneyDrunkDataRegistration);
 
         Assert.Contains("IOperationContextAccessor", ex.Message);
     }
@@ -120,7 +120,7 @@ public sealed class ServiceCollectionExtensionsTests
         services.AddSingleton(Substitute.For<IOperationContextAccessor>());
 
         var ex = Assert.Throws<InvalidOperationException>(
-            () => services.ValidateHoneyDrunkDataRegistration());
+            services.ValidateHoneyDrunkDataRegistration);
 
         Assert.Contains("ITenantAccessor", ex.Message);
     }

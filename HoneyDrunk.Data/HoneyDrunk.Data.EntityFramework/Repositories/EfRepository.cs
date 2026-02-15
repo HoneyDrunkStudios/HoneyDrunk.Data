@@ -17,9 +17,6 @@ public class EfRepository<TEntity, TContext> : IRepository<TEntity>
     where TEntity : class
     where TContext : DbContext
 {
-    private readonly TContext _context;
-    private readonly DbSet<TEntity> _dbSet;
-
     /// <summary>
     /// Initializes a new instance of the <see cref="EfRepository{TEntity, TContext}"/> class.
     /// </summary>
@@ -27,25 +24,25 @@ public class EfRepository<TEntity, TContext> : IRepository<TEntity>
     public EfRepository(TContext context)
     {
         ArgumentNullException.ThrowIfNull(context);
-        _context = context;
-        _dbSet = context.Set<TEntity>();
+        Context = context;
+        DbSet = context.Set<TEntity>();
     }
 
     /// <summary>
     /// Gets the underlying DbContext.
     /// </summary>
-    protected TContext Context => _context;
+    protected TContext Context { get; }
 
     /// <summary>
     /// Gets the underlying DbSet.
     /// </summary>
-    protected DbSet<TEntity> DbSet => _dbSet;
+    protected DbSet<TEntity> DbSet { get; }
 
     /// <inheritdoc />
     public virtual async ValueTask<TEntity?> FindByIdAsync(object id, CancellationToken cancellationToken = default)
     {
         using var activity = DataActivitySource.StartRepositoryActivity(typeof(TEntity).Name, "FindById");
-        return await _dbSet.FindAsync([id], cancellationToken).ConfigureAwait(false);
+        return await DbSet.FindAsync([id], cancellationToken).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
@@ -56,7 +53,7 @@ public class EfRepository<TEntity, TContext> : IRepository<TEntity>
         ArgumentNullException.ThrowIfNull(predicate);
 
         using var activity = DataActivitySource.StartRepositoryActivity(typeof(TEntity).Name, "Find");
-        return await _dbSet
+        return await DbSet
             .Where(predicate)
             .ToListAsync(cancellationToken)
             .ConfigureAwait(false);
@@ -70,7 +67,7 @@ public class EfRepository<TEntity, TContext> : IRepository<TEntity>
         ArgumentNullException.ThrowIfNull(predicate);
 
         using var activity = DataActivitySource.StartRepositoryActivity(typeof(TEntity).Name, "FindOne");
-        return await _dbSet
+        return await DbSet
             .FirstOrDefaultAsync(predicate, cancellationToken)
             .ConfigureAwait(false);
     }
@@ -83,7 +80,7 @@ public class EfRepository<TEntity, TContext> : IRepository<TEntity>
         ArgumentNullException.ThrowIfNull(predicate);
 
         using var activity = DataActivitySource.StartRepositoryActivity(typeof(TEntity).Name, "Exists");
-        return await _dbSet
+        return await DbSet
             .AnyAsync(predicate, cancellationToken)
             .ConfigureAwait(false);
     }
@@ -95,8 +92,8 @@ public class EfRepository<TEntity, TContext> : IRepository<TEntity>
     {
         using var activity = DataActivitySource.StartRepositoryActivity(typeof(TEntity).Name, "Count");
         return predicate is null
-            ? await _dbSet.CountAsync(cancellationToken).ConfigureAwait(false)
-            : await _dbSet.CountAsync(predicate, cancellationToken).ConfigureAwait(false);
+            ? await DbSet.CountAsync(cancellationToken).ConfigureAwait(false)
+            : await DbSet.CountAsync(predicate, cancellationToken).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
@@ -105,7 +102,7 @@ public class EfRepository<TEntity, TContext> : IRepository<TEntity>
         ArgumentNullException.ThrowIfNull(entity);
 
         using var activity = DataActivitySource.StartRepositoryActivity(typeof(TEntity).Name, "Add");
-        await _dbSet.AddAsync(entity, cancellationToken).ConfigureAwait(false);
+        await DbSet.AddAsync(entity, cancellationToken).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
@@ -114,7 +111,7 @@ public class EfRepository<TEntity, TContext> : IRepository<TEntity>
         ArgumentNullException.ThrowIfNull(entities);
 
         using var activity = DataActivitySource.StartRepositoryActivity(typeof(TEntity).Name, "AddRange");
-        await _dbSet.AddRangeAsync(entities, cancellationToken).ConfigureAwait(false);
+        await DbSet.AddRangeAsync(entities, cancellationToken).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
@@ -123,7 +120,7 @@ public class EfRepository<TEntity, TContext> : IRepository<TEntity>
         ArgumentNullException.ThrowIfNull(entity);
 
         using var activity = DataActivitySource.StartRepositoryActivity(typeof(TEntity).Name, "Update");
-        _dbSet.Update(entity);
+        DbSet.Update(entity);
     }
 
     /// <inheritdoc />
@@ -132,7 +129,7 @@ public class EfRepository<TEntity, TContext> : IRepository<TEntity>
         ArgumentNullException.ThrowIfNull(entities);
 
         using var activity = DataActivitySource.StartRepositoryActivity(typeof(TEntity).Name, "UpdateRange");
-        _dbSet.UpdateRange(entities);
+        DbSet.UpdateRange(entities);
     }
 
     /// <inheritdoc />
@@ -141,7 +138,7 @@ public class EfRepository<TEntity, TContext> : IRepository<TEntity>
         ArgumentNullException.ThrowIfNull(entity);
 
         using var activity = DataActivitySource.StartRepositoryActivity(typeof(TEntity).Name, "Remove");
-        _dbSet.Remove(entity);
+        DbSet.Remove(entity);
     }
 
     /// <inheritdoc />
@@ -150,6 +147,6 @@ public class EfRepository<TEntity, TContext> : IRepository<TEntity>
         ArgumentNullException.ThrowIfNull(entities);
 
         using var activity = DataActivitySource.StartRepositoryActivity(typeof(TEntity).Name, "RemoveRange");
-        _dbSet.RemoveRange(entities);
+        DbSet.RemoveRange(entities);
     }
 }

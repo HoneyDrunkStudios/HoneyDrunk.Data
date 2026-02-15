@@ -14,7 +14,6 @@ namespace HoneyDrunk.Data.EntityFramework.Context;
 public abstract class HoneyDrunkDbContext : DbContext
 {
     private readonly ITenantAccessor? _tenantAccessor;
-    private readonly IDataDiagnosticsContext? _diagnosticsContext;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="HoneyDrunkDbContext"/> class.
@@ -38,7 +37,7 @@ public abstract class HoneyDrunkDbContext : DbContext
         : base(options)
     {
         _tenantAccessor = tenantAccessor;
-        _diagnosticsContext = diagnosticsContext;
+        DiagnosticsContext = diagnosticsContext;
     }
 
     /// <summary>
@@ -49,7 +48,7 @@ public abstract class HoneyDrunkDbContext : DbContext
     /// <summary>
     /// Gets the current diagnostics context for telemetry enrichment.
     /// </summary>
-    protected IDataDiagnosticsContext? DiagnosticsContext => _diagnosticsContext;
+    protected IDataDiagnosticsContext? DiagnosticsContext { get; }
 
     /// <summary>
     /// Gets the schema name to use for this context, based on tenant resolution.
@@ -98,21 +97,21 @@ public abstract class HoneyDrunkDbContext : DbContext
     /// <returns>A query tag string with correlation information, or <c>null</c> if no context is available.</returns>
     protected string? GetQueryTag()
     {
-        if (_diagnosticsContext is null)
+        if (DiagnosticsContext is null)
         {
             return null;
         }
 
         var parts = new List<string>();
 
-        if (!string.IsNullOrEmpty(_diagnosticsContext.CorrelationId))
+        if (!string.IsNullOrEmpty(DiagnosticsContext.CorrelationId))
         {
-            parts.Add($"correlation:{_diagnosticsContext.CorrelationId}");
+            parts.Add($"correlation:{DiagnosticsContext.CorrelationId}");
         }
 
-        if (!string.IsNullOrEmpty(_diagnosticsContext.OperationId))
+        if (!string.IsNullOrEmpty(DiagnosticsContext.OperationId))
         {
-            parts.Add($"operation:{_diagnosticsContext.OperationId}");
+            parts.Add($"operation:{DiagnosticsContext.OperationId}");
         }
 
         return parts.Count > 0 ? string.Join(" ", parts) : null;
