@@ -20,7 +20,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Comprehensive XML documentation for all public types
 - Better null handling with `TenantId.IsEmpty` property
 - Improved factory patterns for unit of work creation
+## [0.3.0] - 2026-02-15
 
+### Added
+
+- `HoneyDrunk.Data.Canary` project with 18 CI invariant tests covering Kernel context, outbox concurrency, and transport boundary isolation
 ## [0.1.0] - 2026-01-01
 
 ### Added

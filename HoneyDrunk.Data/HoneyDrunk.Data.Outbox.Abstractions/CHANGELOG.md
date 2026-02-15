@@ -1,0 +1,27 @@
+# Changelog — HoneyDrunk.Data.Outbox.Abstractions
+
+## 0.3.0
+
+- Canary test coverage for outbox concurrency invariants (no double-dispatch, deterministic state transitions) and transport boundary isolation.
+
+## 0.2.0
+
+- **Breaking:** State machine renamed: `Processing` → `Leased`, `Failed` removed, `Poisoned` → `DeadLetter`.
+- `OutboxMessageStatus` enum: `Pending(0)`, `Leased(1)`, `Dispatched(2)`, `DeadLetter(3)`.
+- Added `LeasedUntil` (`DateTimeOffset?`) property to `OutboxMessage` for lease-based concurrency.
+- Added `LastError` (`string?`) property to `OutboxMessage` for failure diagnostics.
+- Added `LeaseDuration` (`TimeSpan`) property to `OutboxOptions`.
+- `IOutboxReader.ClaimBatchAsync` now accepts `leaseDuration` parameter.
+- Added `IOutboxReader.ReleaseForRetryAsync` (replaces `MarkFailedAsync`) with `lastError` parameter.
+- Added `IOutboxReader.DeadLetterAsync` (replaces `MarkPoisonedAsync`) with `lastError` parameter.
+
+## 0.1.0
+
+- Initial release.
+- `IOutboxWriter` — write outbox messages within a transaction.
+- `IOutboxReader` — load pending messages and manage dispatch lifecycle.
+- `IOutboxDispatcher` — dispatch trigger interface.
+- `OutboxMessage` — message model.
+- `OutboxMessageStatus` — lifecycle enum.
+- `OutboxOptions` — configuration.
+- `OutboxHeaderNames` — well-known header constants.

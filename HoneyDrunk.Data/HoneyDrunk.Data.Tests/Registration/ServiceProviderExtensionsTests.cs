@@ -30,7 +30,7 @@ public sealed class ServiceProviderExtensionsTests
         var provider = services.BuildServiceProvider();
 
         var ex = Assert.Throws<InvalidOperationException>(
-            () => provider.ValidateHoneyDrunkDataConfiguration());
+            provider.ValidateHoneyDrunkDataConfiguration);
 
         Assert.Contains("IOperationContextAccessor", ex.Message);
     }
@@ -44,7 +44,7 @@ public sealed class ServiceProviderExtensionsTests
         var provider = services.BuildServiceProvider();
 
         var ex = Assert.Throws<InvalidOperationException>(
-            () => provider.ValidateHoneyDrunkDataConfiguration());
+            provider.ValidateHoneyDrunkDataConfiguration);
 
         Assert.Contains("ITenantAccessor", ex.Message);
     }
@@ -58,7 +58,7 @@ public sealed class ServiceProviderExtensionsTests
         var provider = services.BuildServiceProvider();
 
         var ex = Assert.Throws<InvalidOperationException>(
-            () => provider.ValidateHoneyDrunkDataConfiguration());
+            provider.ValidateHoneyDrunkDataConfiguration);
 
         Assert.Contains("IDataDiagnosticsContext", ex.Message);
     }
@@ -94,7 +94,7 @@ public sealed class ServiceProviderExtensionsTests
         var provider = services.BuildServiceProvider();
 
         var ex = Assert.Throws<InvalidOperationException>(
-            () => provider.ValidateHoneyDrunkDataConfiguration());
+            provider.ValidateHoneyDrunkDataConfiguration);
 
         Assert.Contains("IOperationContextAccessor", ex.Message);
         Assert.Contains("ITenantAccessor", ex.Message);

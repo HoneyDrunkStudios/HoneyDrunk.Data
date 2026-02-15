@@ -19,7 +19,7 @@ public sealed class DataActivitySourceTests : IDisposable
         _listener = new ActivityListener
         {
             ShouldListenTo = source => source.Name == DataActivitySource.DefaultSourceName,
-            Sample = (ref ActivityCreationOptions<ActivityContext> _) => ActivitySamplingResult.AllData,
+            Sample = static (ref _) => ActivitySamplingResult.AllData,
             ActivityStarted = activity => _capturedActivities.Add(activity),
         };
         ActivitySource.AddActivityListener(_listener);

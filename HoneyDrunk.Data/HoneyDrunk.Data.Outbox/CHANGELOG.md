@@ -1,0 +1,25 @@
+# Changelog — HoneyDrunk.Data.Outbox
+
+## 0.3.0
+
+- Canary test coverage for outbox concurrency invariants and transport boundary isolation.
+
+## 0.2.0
+
+- **Breaking:** `ClaimBatchAsync` replaces `LoadPendingBatchAsync` with lease semantics.
+- `EfOutboxReader.ClaimBatchAsync` sets `LeasedUntil` on claimed messages and auto-reclaims expired leases.
+- `ReleaseForRetryAsync` transitions messages back to `Pending` with `NextAttemptAt` and persists `LastError`.
+- `DeadLetterAsync` transitions to `DeadLetter` and persists `LastError`.
+- `OutboxMessageConfiguration` adds `LeasedUntil` and `LastError` column mappings.
+- Source-generated logging via `Log.cs`.
+- Comprehensive test coverage (14 reader tests, 12 writer tests, 7 serializer tests).
+
+## 0.1.0
+
+- Initial release.
+- `EfOutboxWriter<TContext>` — adds outbox messages to EF change tracker.
+- `EfOutboxReader<TContext>` — batch retrieval with compare-and-swap concurrency.
+- `OutboxMessageConfiguration` — EF entity type configuration with indexes.
+- `ModelBuilderExtensions.ApplyOutboxConfiguration()` — model builder integration.
+- `OutboxHeaderSerializer` — System.Text.Json header serialization.
+- `AddHoneyDrunkDataOutbox<TContext>()` — DI registration extension.

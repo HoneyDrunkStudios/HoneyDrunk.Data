@@ -4,43 +4,45 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![.NET 10](https://img.shields.io/badge/.NET-10.0-512BD4)](https://dotnet.microsoft.com/download/dotnet/10.0)
 
-> **Persistence conventions for HoneyDrunk.OS** - Repository patterns, tenant-aware data access contracts, and EF Core implementation for the Grid.
+> **Persistence conventions for HoneyDrunk.OS** — Repository patterns, tenant-aware data access, transactional outbox, and EF Core implementation for the Grid.
 
 ## 📦 What Is This?
 
-HoneyDrunk.Data provides persistence conventions and an EF Core implementation for HoneyDrunk.OS ("the Hive"). It offers repository patterns, tenant identity access, and telemetry integration for Nodes across the Grid.
+HoneyDrunk.Data provides persistence conventions and an EF Core implementation for HoneyDrunk.OS ("the Hive"). It offers repository patterns, tenant identity access, transactional outbox with lease-based dispatch, and telemetry integration for Nodes across the Grid.
 
 ### What This Package Provides
 
-- **Tenant Identity Access** - `ITenantAccessor` extracts tenant from Kernel context; application code applies filtering
-- **Repository Contracts** - Generic repository interfaces for data access patterns
-- **Unit of Work** - Coordinated change tracking within a single DbContext
-- **Transaction Wrappers** - EF Core transaction scope wrappers for explicit control
-- **Correlation Tagging** - SQL command comments with correlation IDs (EF Core relational providers)
-- **Health Contributors** - Database connectivity health contributors (opt-in, provider-specific)
-- **EF Core Implementation** - Repository and unit of work implementations for Entity Framework Core
+- **Tenant Identity Access** — `ITenantAccessor` extracts tenant from Kernel context; application code applies filtering
+- **Repository Contracts** — Generic repository interfaces for data access patterns
+- **Unit of Work** — Coordinated change tracking within a single DbContext
+- **Transaction Wrappers** — EF Core transaction scope wrappers for explicit control
+- **Correlation Tagging** — SQL command comments with correlation IDs (EF Core relational providers)
+- **Health Contributors** — Database connectivity health contributors (opt-in, provider-specific)
+- **EF Core Implementation** — Repository and unit of work implementations for Entity Framework Core
+- **Transactional Outbox** — Write domain events atomically with business state, dispatch via Transport with lease-based concurrency and retry
 
 ### What This Package Does Not Provide
 
 - **Automatic tenant filtering** — Application responsibility; no built-in query filters
-- **Tenant resolution wiring** — `ITenantResolutionStrategy` is a contract only; no default implementation or wiring exists in v0.1.0
+- **Tenant resolution wiring** — `ITenantResolutionStrategy` is a contract only; no default implementation or wiring exists in v0.3.0
 - **Distributed transactions** — Context-local atomicity only
-- **Non-EF provider implementations** — EF Core is the only provider in v0.1.0
+- **Non-EF provider implementations** — EF Core is the only provider in v0.3.0
 
 ---
 
-## ⚠️ v0.1.0 Limitations
+## ⚠️ v0.3.0 Limitations
 
-The following features exist as **contracts only** in v0.1.0 and require application-specific implementation:
+The following features exist as **contracts only** in v0.3.0 and require application-specific implementation:
 
-| Feature | Contract | v0.1.0 Status |
+| Feature | Contract | Status |
 |---------|----------|---------------|
 | Tenant identity access | `ITenantAccessor` | ✅ Implemented via `KernelTenantAccessor` |
 | Tenant resolution (DB/schema per tenant) | `ITenantResolutionStrategy` | ⚠️ Contract only — no wiring; application must implement |
 | Tenant filtering | Global query filters | ⚠️ Not automatic — application must configure per entity |
 | Health aggregation | `IDataHealthContributor` | ⚠️ Contributors exist — application wires into health system |
+| Transactional outbox | `IOutboxWriter` / `IOutboxReader` | ✅ Implemented via EF Core with lease-based concurrency |
 
-**Bottom line:** v0.1.0 provides **tenant identity access**, not full multi-tenant data isolation. Applications must implement:
+**Bottom line:** v0.3.0 provides **tenant identity access** and **transactional outbox**, not full multi-tenant data isolation. Applications must implement:
 - `ITenantResolutionStrategy` if using database-per-tenant or schema-per-tenant
 - Query filters per entity type for row-level isolation
 - Health endpoint wiring for contributor aggregation
@@ -60,6 +62,11 @@ dotnet add package HoneyDrunk.Data.EntityFramework
 
 # Or just the abstractions (contracts only, no Kernel dependency)
 dotnet add package HoneyDrunk.Data.Abstractions
+
+# Transactional outbox (add any combination)
+dotnet add package HoneyDrunk.Data.Outbox.Abstractions  # Contracts only
+dotnet add package HoneyDrunk.Data.Outbox               # EF Core persistence
+dotnet add package HoneyDrunk.Data.Outbox.Dispatcher     # Background dispatch via Transport
 ```
 
 ### Web API Setup
@@ -135,7 +142,7 @@ public class OrderService
 
 ---
 
-## 🎯 Key Features (v0.1.0)
+## 🎯 Key Features (v0.3.0)
 
 ### 🏢 Tenant Identity Access
 
@@ -236,6 +243,39 @@ public interface IDataHealthContributor
 
 **Note:** Health contributors are passive—invoked by host health system on demand. No aggregation or endpoint integration is provided; applications wire contributors into their health check infrastructure.
 
+### 📤 Transactional Outbox
+
+Write domain events atomically with business state, dispatch via Transport with lease-based concurrency:
+
+```csharp
+// Write events in the same transaction as domain state
+await outboxWriter.WriteAsync(new OutboxMessage
+{
+    Id = Guid.NewGuid(),
+    Type = typeof(OrderPlaced).FullName!,
+    Payload = JsonSerializer.Serialize(orderPlaced),
+    OccurredAt = DateTimeOffset.UtcNow,
+});
+await unitOfWork.SaveChangesAsync(); // Atomic commit
+```
+
+**State Machine:** `Pending → Leased → Dispatched`, with `DeadLetter` for exhausted retries.
+
+**Lease-Based Concurrency:** Messages are claimed with a time-bound lease. If a dispatcher crashes, the lease expires and another instance reclaims the messages automatically.
+
+```csharp
+// Register outbox + dispatcher
+services
+    .AddHoneyDrunkDataOutbox<AppDbContext>()
+    .AddOutboxDispatcher(opts =>
+    {
+        opts.DefaultDestination = "domain-events";
+        opts.BatchSize = 100;
+        opts.LeaseDuration = TimeSpan.FromMinutes(5);
+        opts.MaxRetryAttempts = 5;
+    });
+```
+
 ---
 
 ## 📖 Documentation
@@ -248,6 +288,7 @@ public interface IDataHealthContributor
 - **[Migrations](docs/Migrations.md)** - Migration tooling conventions
 - **[Testing](docs/Testing.md)** - SQLite test infrastructure
 - **[Architecture](docs/Architecture.md)** - Layer responsibilities and design decisions
+- **[Outbox](docs/Outbox.md)** - Transactional outbox pattern with lease-based dispatch
 
 ---
 
@@ -284,6 +325,22 @@ HoneyDrunk.Data/
 │   ├── Factories/                       # Design-time factory base
 │   └── Helpers/                         # Migration runner utilities
 │
+├── HoneyDrunk.Data.Outbox.Abstractions/ # Outbox contracts (no EF, no Transport)
+│   ├── IOutboxWriter, IOutboxReader     # Writer/reader interfaces
+│   ├── OutboxMessage                    # Message model with lease fields
+│   └── OutboxMessageStatus              # Pending → Leased → Dispatched / DeadLetter
+│
+├── HoneyDrunk.Data.Outbox/             # EF Core outbox persistence
+│   ├── Persistence/                     # EfOutboxWriter, EfOutboxReader
+│   ├── Configuration/                   # Entity type configuration
+│   ├── Serialization/                   # Header serialization
+│   └── Registration/                    # AddHoneyDrunkDataOutbox<T>()
+│
+├── HoneyDrunk.Data.Outbox.Dispatcher/  # Background outbox dispatcher
+│   ├── OutboxDispatcherService          # BackgroundService poll/publish loop
+│   ├── OutboxDispatcherOptions          # Batch size, retry, lease config
+│   └── Registration/                    # AddOutboxDispatcher()
+│
 └── HoneyDrunk.Data.Testing/            # Test infrastructure (SQLite)
     ├── Factories/                       # SQLite test factories
     ├── Fixtures/                        # xUnit fixtures
@@ -292,39 +349,37 @@ HoneyDrunk.Data/
 
 ---
 
-## 🆕 What's New in v0.1.0
+## 🆕 What's New in v0.3.0
 
-### Abstractions
+### Canary Test Project (New)
+- `HoneyDrunk.Data.Canary` project with 18 CI invariant tests
+- Kernel context invariants: validates Data relies on Kernel context, not its own substitutes
+- Outbox concurrency invariants: validates no double-dispatch, deterministic state machine transitions
+- Transport boundary invariants: validates assembly reference isolation between layers
+
+### Transactional Outbox (v0.2.0)
+- Three-package outbox architecture: Abstractions, EF Core persistence, and Transport dispatcher
+- Lease-based state machine: `Pending → Leased → Dispatched`, with `DeadLetter` for exhausted retries
+- `IOutboxWriter` / `IOutboxReader` / `IOutboxDispatcher` contracts
+- `EfOutboxWriter<T>` with automatic `CorrelationId` and `TenantId` enrichment from Kernel context
+- `EfOutboxReader<T>` with per-message compare-and-swap concurrency and expired-lease recovery
+- `OutboxDispatcherService` background polling with configurable retry and exponential backoff
+- `LeasedUntil` and `LastError` columns for operational visibility
+- `OutboxHeaderSerializer` for cross-transport header propagation
+- `AddHoneyDrunkDataOutbox<T>()` and `AddOutboxDispatcher()` DI extensions
+
+### Core Data (v0.2.0)
 - `TenantId` typed tenant identifier
 - `ITenantAccessor` for tenant identity access
 - `ITenantResolutionStrategy` contract (implementation is application-specific)
 - `IRepository<T>` and `IReadOnlyRepository<T>` repository contracts
 - `IUnitOfWork` and `ITransactionScope` for coordinated persistence
 - `IDataHealthContributor` for health check participation
-
-### Orchestration Layer
 - `KernelTenantAccessor` extracting tenant from `IOperationContextAccessor`
-- `KernelDataDiagnosticsContext` for telemetry enrichment
-- `DataActivitySource` for application-layer tracing
-- `AddHoneyDrunkData()` registration
-
-### Entity Framework Provider
 - `HoneyDrunkDbContext` base with tenant identity and correlation access
-- `EfRepository<T>` repository implementation
-- `EfUnitOfWork<T>` with repository caching
-- `CorrelationCommandInterceptor` for SQL tagging (relational providers)
-- `ModelBuilderConventions` optional naming utilities
-
-### SQL Server Support
-- `AddHoneyDrunkDataSqlServer<T>()` and `AddHoneyDrunkDataAzureSql<T>()` registration
-- Retry-on-failure and command timeout configuration
-- `SqlServerModelConventions` optional datetime2 and decimal utilities
-
-### Testing Support
-- `SqliteTestDbContextFactory<T>` for in-memory testing
-- `SqliteDbContextFixture<T>` xUnit fixture
-- `DatabaseResetHelper` for test isolation
-- `TestDoubles` for tenant and diagnostics dependencies
+- `EfRepository<T>`, `EfUnitOfWork<T>`, `CorrelationCommandInterceptor`
+- SQL Server support with retry-on-failure and Azure SQL registration
+- SQLite test infrastructure with factory, fixture, and test doubles
 
 ---
 
@@ -334,8 +389,8 @@ HoneyDrunk.Data/
 |---------|--------------|
 | **[HoneyDrunk.Kernel](https://github.com/HoneyDrunkStudios/HoneyDrunk.Kernel)** | Orchestration layer depends on Kernel for context access |
 | **[HoneyDrunk.Standards](https://github.com/HoneyDrunkStudios/HoneyDrunk.Standards)** | Analyzers and coding conventions |
-| **HoneyDrunk.Transport** | Messaging infrastructure *(in development)* |
-| **HoneyDrunk.Auth** | Authentication and authorization *(in development)* |
+| **[HoneyDrunk.Transport](https://github.com/HoneyDrunkStudios/HoneyDrunk.Transport)** | Outbox dispatcher publishes via Transport abstractions |
+| **[HoneyDrunk.Auth](https://github.com/HoneyDrunkStudios/HoneyDrunk.Auth)** | Authentication and authorization |
 
 **Note:** `HoneyDrunk.Data.Abstractions` has no external dependencies and can be used independently. The orchestration layer (`HoneyDrunk.Data`) depends on Kernel runtime.
 
