@@ -43,6 +43,11 @@ jobs:
   release:
     name: Build, Pack & Publish
     needs: prepare
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+      security-events: write
     uses: HoneyDrunkStudios/HoneyDrunk.Actions/.github/workflows/release.yml@main
     with:
       dotnet-version: '10.0.x'
@@ -65,81 +70,34 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Checkout Actions
+        uses: actions/checkout@v4
+        with:
+          repository: HoneyDrunkStudios/HoneyDrunk.Actions
+          ref: main
+          path: .actions
+
+      - name: Generate Release Notes
+        id: notes
+        uses: ./.actions/.github/actions/release/generate-notes
+        with:
+          version: ${{ needs.prepare.outputs.version }}
+          product-name: HoneyDrunk.Data
+          product-description: 'Persistence layer for HoneyDrunk.OS with multi-tenant data access, repository patterns, and Entity Framework Core integration.'
+          nuget-packages: |
+            HoneyDrunk.Data.Abstractions
+            HoneyDrunk.Data
+            HoneyDrunk.Data.EntityFramework
+            HoneyDrunk.Data.SqlServer
+            HoneyDrunk.Data.Migrations
+          docs-url: 'https://github.com/HoneyDrunkStudios/HoneyDrunk.Data#readme'
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ needs.prepare.outputs.version-tag }}
           name: HoneyDrunk.Data ${{ needs.prepare.outputs.version-tag }}
-          body: |
-            ## HoneyDrunk.Data ${{ needs.prepare.outputs.version-tag }}
-
-            Persistence layer for HoneyDrunk.OS with multi-tenant data access, repository patterns, and Entity Framework Core integration.
-
-            ### 📦 Packages
-
-            **HoneyDrunk.Data.Abstractions** - Core persistence contracts (provider-agnostic)
-
-            ```xml
-            <PackageReference Include="HoneyDrunk.Data.Abstractions" Version="${{ needs.prepare.outputs.version }}" />
-            ```
-
-            **HoneyDrunk.Data** - Orchestration layer with Kernel integration
-
-            ```xml
-            <PackageReference Include="HoneyDrunk.Data" Version="${{ needs.prepare.outputs.version }}" />
-            ```
-
-            **HoneyDrunk.Data.EntityFramework** - Entity Framework Core provider
-
-            ```xml
-            <PackageReference Include="HoneyDrunk.Data.EntityFramework" Version="${{ needs.prepare.outputs.version }}" />
-            ```
-
-            **HoneyDrunk.Data.SqlServer** - SQL Server specialization
-
-            ```xml
-            <PackageReference Include="HoneyDrunk.Data.SqlServer" Version="${{ needs.prepare.outputs.version }}" />
-            ```
-
-            **HoneyDrunk.Data.Migrations** - Migration tooling for CI/CD
-
-            ```xml
-            <PackageReference Include="HoneyDrunk.Data.Migrations" Version="${{ needs.prepare.outputs.version }}" />
-            ```
-
-            ### 🔗 Links
-            - [NuGet: HoneyDrunk.Data.Abstractions](https://www.nuget.org/packages/HoneyDrunk.Data.Abstractions/${{ needs.prepare.outputs.version }})
-            - [NuGet: HoneyDrunk.Data](https://www.nuget.org/packages/HoneyDrunk.Data/${{ needs.prepare.outputs.version }})
-            - [NuGet: HoneyDrunk.Data.EntityFramework](https://www.nuget.org/packages/HoneyDrunk.Data.EntityFramework/${{ needs.prepare.outputs.version }})
-            - [NuGet: HoneyDrunk.Data.SqlServer](https://www.nuget.org/packages/HoneyDrunk.Data.SqlServer/${{ needs.prepare.outputs.version }})
-            - [NuGet: HoneyDrunk.Data.Migrations](https://www.nuget.org/packages/HoneyDrunk.Data.Migrations/${{ needs.prepare.outputs.version }})
-            - [Documentation](https://github.com/HoneyDrunkStudios/HoneyDrunk.Data#readme)
-
-            ### 🚀 Quick Start
-
-            ```csharp
-            using HoneyDrunk.Data.Registration;
-            using HoneyDrunk.Data.SqlServer.Registration;
-
-            var builder = WebApplication.CreateBuilder(args);
-
-            // Register Kernel services
-            builder.Services.AddHoneyDrunkGrid(options =>
-            {
-                options.NodeId = "data-node";
-                options.StudioId = "demo-studio";
-            });
-
-            // Register Data layer with SQL Server
-            builder.Services.AddHoneyDrunkData();
-            builder.Services.AddHoneyDrunkDataSqlServer<MyDbContext>(sqlOptions =>
-            {
-                sqlOptions.ConnectionString = builder.Configuration.GetConnectionString("Default");
-                sqlOptions.EnableRetryOnFailure = true;
-            });
-
-            var app = builder.Build();
-            app.Run();
-            ```
+          body: ${{ steps.notes.outputs.body }}
+          generate_release_notes: ${{ steps.notes.outputs.has-changelog == 'false' }}
           draft: false
           prerelease: false
