@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using System.Data.Common;
 using System.Text;
 
 namespace HoneyDrunk.Data.Outbox.Dispatcher;
@@ -68,7 +69,15 @@ public sealed class OutboxDispatcherService(
 
                 Log.MessageDispatched(_logger, message.Id, destination.Address);
             }
-            catch (Exception ex)
+            catch (DbException ex)
+            {
+                await HandleFailureAsync(reader, message, ex, cancellationToken);
+            }
+            catch (InvalidOperationException ex)
+            {
+                await HandleFailureAsync(reader, message, ex, cancellationToken);
+            }
+            catch (TimeoutException ex)
             {
                 await HandleFailureAsync(reader, message, ex, cancellationToken);
             }
@@ -101,7 +110,17 @@ public sealed class OutboxDispatcherService(
             {
                 break;
             }
-            catch (Exception ex)
+            catch (DbException ex)
+            {
+                Log.DispatchCycleFailed(_logger, ex, _options.ErrorDelay);
+                await SafeDelay(_options.ErrorDelay, stoppingToken);
+            }
+            catch (InvalidOperationException ex)
+            {
+                Log.DispatchCycleFailed(_logger, ex, _options.ErrorDelay);
+                await SafeDelay(_options.ErrorDelay, stoppingToken);
+            }
+            catch (TimeoutException ex)
             {
                 Log.DispatchCycleFailed(_logger, ex, _options.ErrorDelay);
                 await SafeDelay(_options.ErrorDelay, stoppingToken);

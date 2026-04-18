@@ -17,7 +17,9 @@ public sealed class CanarySqliteFixture : IAsyncLifetime, IDisposable
 
     public async Task InitializeAsync()
     {
-        _dbPath = Path.Combine(Path.GetTempPath(), $"canary_{Guid.NewGuid():N}.db");
+        var tempDirectory = Path.GetTempPath();
+        var databaseFileName = $"canary_{Guid.NewGuid():N}.db";
+        _dbPath = Path.GetFullPath(databaseFileName, tempDirectory);
         ConnectionString = $"DataSource={_dbPath}";
 
         // Keep one connection open to prevent SQLite from deleting the file

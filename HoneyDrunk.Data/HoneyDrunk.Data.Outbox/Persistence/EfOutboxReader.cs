@@ -44,15 +44,17 @@ public sealed class EfOutboxReader<TContext>(
     {
         var now = DateTimeOffset.UtcNow;
         var leaseExpiry = now.Add(leaseDuration);
+        var pendingAndReady = _dbContext.Set<OutboxMessage>()
+            .Where(m => m.Status == OutboxMessageStatus.Pending)
+            .Where(m => m.NextAttemptAt == null || m.NextAttemptAt <= now);
+        var leasedAndExpired = _dbContext.Set<OutboxMessage>()
+            .Where(m => m.Status == OutboxMessageStatus.Leased)
+            .Where(m => m.LeasedUntil != null && m.LeasedUntil <= now);
 
         // Eligible: Pending + ready, OR Leased with expired lease (crashed dispatcher recovery)
-        var candidates = await _dbContext.Set<OutboxMessage>()
+        var candidates = await pendingAndReady
+            .Union(leasedAndExpired)
             .AsNoTracking()
-            .Where(m =>
-                (m.Status == OutboxMessageStatus.Pending
-                    && (m.NextAttemptAt == null || m.NextAttemptAt <= now))
-                || (m.Status == OutboxMessageStatus.Leased
-                    && m.LeasedUntil != null && m.LeasedUntil <= now))
             .OrderBy(m => m.OccurredAt)
             .Take(batchSize)
             .ToListAsync(cancellationToken);
