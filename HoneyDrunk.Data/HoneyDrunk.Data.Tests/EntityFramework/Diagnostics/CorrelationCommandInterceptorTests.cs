@@ -39,7 +39,7 @@ public sealed class CorrelationCommandInterceptorTests
     public void NonQueryExecuting_WithoutCorrelationId_DoesNotModify()
     {
         var diagnostics = Substitute.For<IDataDiagnosticsContext>();
-        diagnostics.CorrelationId.Returns((string?)null);
+        diagnostics.CorrelationId.Returns((string)null!);
 
         var interceptor = new CorrelationCommandInterceptor(diagnostics);
         var command = CreateMockCommand("UPDATE Table SET Col = 1");

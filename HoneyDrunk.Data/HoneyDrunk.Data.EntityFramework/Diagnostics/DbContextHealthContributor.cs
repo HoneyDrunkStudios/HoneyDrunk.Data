@@ -3,6 +3,7 @@
 
 using HoneyDrunk.Data.Abstractions.Diagnostics;
 using Microsoft.EntityFrameworkCore;
+using System.Data.Common;
 
 namespace HoneyDrunk.Data.EntityFramework.Diagnostics;
 
@@ -39,7 +40,11 @@ public sealed class DbContextHealthContributor<TContext> : IDataHealthContributo
                 ? DataHealthResult.Healthy("Database connection successful")
                 : DataHealthResult.Unhealthy("Cannot connect to database");
         }
-        catch (Exception ex)
+        catch (DbException ex)
+        {
+            return DataHealthResult.Unhealthy($"Database health check failed: {ex.Message}");
+        }
+        catch (InvalidOperationException ex)
         {
             return DataHealthResult.Unhealthy($"Database health check failed: {ex.Message}");
         }

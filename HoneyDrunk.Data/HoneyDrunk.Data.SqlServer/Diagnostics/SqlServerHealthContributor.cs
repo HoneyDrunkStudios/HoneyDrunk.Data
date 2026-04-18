@@ -60,7 +60,11 @@ public sealed class SqlServerHealthContributor<TContext> : IDataHealthContributo
         {
             return DataHealthResult.Unhealthy($"SQL Server health check failed: {ex.Message}");
         }
-        catch (Exception ex)
+        catch (ArgumentException ex)
+        {
+            return DataHealthResult.Unhealthy($"Unexpected error during health check: {ex.Message}");
+        }
+        catch (InvalidOperationException ex)
         {
             return DataHealthResult.Unhealthy($"Unexpected error during health check: {ex.Message}");
         }

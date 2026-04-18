@@ -90,7 +90,7 @@ public sealed class EfOutboxWriterTests : IAsyncDisposable
         var accessor = Substitute.For<IOperationContextAccessor>();
         var opContext = Substitute.For<IOperationContext>();
         opContext.CorrelationId.Returns("corr-123");
-        opContext.TenantId.Returns((string?)null);
+        opContext.TenantId.Returns((string)null!);
         accessor.Current.Returns(opContext);
 
         var writer = CreateWriter(_context, accessor);
@@ -166,7 +166,7 @@ public sealed class EfOutboxWriterTests : IAsyncDisposable
     public async Task WriteAsync_WhenContextAccessorReturnsNull_DoesNotThrow()
     {
         var accessor = Substitute.For<IOperationContextAccessor>();
-        accessor.Current.Returns((IOperationContext?)null);
+        accessor.Current.Returns((IOperationContext)null!);
 
         var writer = CreateWriter(_context, accessor);
         var message = CreateMessage();

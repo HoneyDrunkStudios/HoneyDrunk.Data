@@ -21,7 +21,7 @@ public sealed class KernelDataDiagnosticsContextTests
     public void CorrelationId_WhenContextIsNull_ReturnsNull()
     {
         var accessor = Substitute.For<IOperationContextAccessor>();
-        accessor.Current.Returns((IOperationContext?)null);
+        accessor.Current.Returns((IOperationContext)null!);
 
         var diagnostics = new KernelDataDiagnosticsContext(accessor);
 
@@ -46,7 +46,7 @@ public sealed class KernelDataDiagnosticsContextTests
     public void OperationId_WhenContextIsNull_ReturnsNull()
     {
         var accessor = Substitute.For<IOperationContextAccessor>();
-        accessor.Current.Returns((IOperationContext?)null);
+        accessor.Current.Returns((IOperationContext)null!);
 
         var diagnostics = new KernelDataDiagnosticsContext(accessor);
 
@@ -71,7 +71,7 @@ public sealed class KernelDataDiagnosticsContextTests
     public void NodeId_WhenContextIsNull_ReturnsNull()
     {
         var accessor = Substitute.For<IOperationContextAccessor>();
-        accessor.Current.Returns((IOperationContext?)null);
+        accessor.Current.Returns((IOperationContext)null!);
 
         var diagnostics = new KernelDataDiagnosticsContext(accessor);
 
@@ -82,7 +82,7 @@ public sealed class KernelDataDiagnosticsContextTests
     public void NodeId_WhenGridContextIsNull_ReturnsNull()
     {
         var context = Substitute.For<IOperationContext>();
-        context.GridContext.Returns((IGridContext?)null);
+        context.GridContext.Returns((IGridContext)null!);
 
         var accessor = Substitute.For<IOperationContextAccessor>();
         accessor.Current.Returns(context);
@@ -113,7 +113,7 @@ public sealed class KernelDataDiagnosticsContextTests
     public void Tags_WhenContextIsNull_ReturnsEmptyDictionary()
     {
         var accessor = Substitute.For<IOperationContextAccessor>();
-        accessor.Current.Returns((IOperationContext?)null);
+        accessor.Current.Returns((IOperationContext)null!);
 
         var diagnostics = new KernelDataDiagnosticsContext(accessor);
 
@@ -151,8 +151,8 @@ public sealed class KernelDataDiagnosticsContextTests
         var context = Substitute.For<IOperationContext>();
         context.CorrelationId.Returns("corr-id");
         context.OperationId.Returns(string.Empty);
-        context.TenantId.Returns((string?)null);
-        context.GridContext.Returns((IGridContext?)null);
+        context.TenantId.Returns((string)null!);
+        context.GridContext.Returns((IGridContext)null!);
 
         var accessor = Substitute.For<IOperationContextAccessor>();
         accessor.Current.Returns(context);

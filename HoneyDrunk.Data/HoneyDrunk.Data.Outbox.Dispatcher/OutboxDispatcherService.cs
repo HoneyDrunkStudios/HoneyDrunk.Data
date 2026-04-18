@@ -8,6 +8,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using System.Data.Common;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace HoneyDrunk.Data.Outbox.Dispatcher;
@@ -41,6 +43,10 @@ public sealed class OutboxDispatcherService(
     private readonly ILogger<OutboxDispatcherService> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
     /// <inheritdoc />
+    [SuppressMessage(
+        "Security",
+        "cs/catch-of-all-exceptions",
+        Justification = "Per-message dispatch must convert non-cancellation failures into retry/dead-letter handling so one bad publish does not stop the dispatcher or strand leased messages until the lease expires.")]
     public async Task DispatchPendingAsync(CancellationToken cancellationToken = default)
     {
         await using var scope = _scopeFactory.CreateAsyncScope();
@@ -68,7 +74,7 @@ public sealed class OutboxDispatcherService(
 
                 Log.MessageDispatched(_logger, message.Id, destination.Address);
             }
-            catch (Exception ex)
+            catch (Exception ex) when (ex is not OperationCanceledException)
             {
                 await HandleFailureAsync(reader, message, ex, cancellationToken);
             }
@@ -101,7 +107,17 @@ public sealed class OutboxDispatcherService(
             {
                 break;
             }
-            catch (Exception ex)
+            catch (DbException ex)
+            {
+                Log.DispatchCycleFailed(_logger, ex, _options.ErrorDelay);
+                await SafeDelay(_options.ErrorDelay, stoppingToken);
+            }
+            catch (InvalidOperationException ex)
+            {
+                Log.DispatchCycleFailed(_logger, ex, _options.ErrorDelay);
+                await SafeDelay(_options.ErrorDelay, stoppingToken);
+            }
+            catch (TimeoutException ex)
             {
                 Log.DispatchCycleFailed(_logger, ex, _options.ErrorDelay);
                 await SafeDelay(_options.ErrorDelay, stoppingToken);
