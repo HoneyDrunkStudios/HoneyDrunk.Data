@@ -9,6 +9,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Data.Common;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace HoneyDrunk.Data.Outbox.Dispatcher;
@@ -42,6 +43,10 @@ public sealed class OutboxDispatcherService(
     private readonly ILogger<OutboxDispatcherService> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
     /// <inheritdoc />
+    [SuppressMessage(
+        "Security",
+        "cs/catch-of-all-exceptions",
+        Justification = "Per-message dispatch must convert non-cancellation failures into retry/dead-letter handling so one bad publish does not stop the dispatcher or strand leased messages until the lease expires.")]
     public async Task DispatchPendingAsync(CancellationToken cancellationToken = default)
     {
         await using var scope = _scopeFactory.CreateAsyncScope();
@@ -69,15 +74,7 @@ public sealed class OutboxDispatcherService(
 
                 Log.MessageDispatched(_logger, message.Id, destination.Address);
             }
-            catch (DbException ex)
-            {
-                await HandleFailureAsync(reader, message, ex, cancellationToken);
-            }
-            catch (InvalidOperationException ex)
-            {
-                await HandleFailureAsync(reader, message, ex, cancellationToken);
-            }
-            catch (TimeoutException ex)
+            catch (Exception ex) when (ex is not OperationCanceledException)
             {
                 await HandleFailureAsync(reader, message, ex, cancellationToken);
             }

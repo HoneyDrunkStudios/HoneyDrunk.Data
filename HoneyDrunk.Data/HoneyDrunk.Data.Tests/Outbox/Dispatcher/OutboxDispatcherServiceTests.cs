@@ -131,6 +131,25 @@ public sealed class OutboxDispatcherServiceTests : IDisposable
     }
 
     [Fact]
+    public async Task DispatchPendingAsync_WhenUnexpectedMessageFailureOccurs_ReleasesForRetry()
+    {
+        var message = CreatePendingMessage(retryCount: 0);
+        _reader.ClaimBatchAsync(Arg.Any<int>(), Arg.Any<TimeSpan>(), Arg.Any<CancellationToken>())
+            .Returns([message]);
+        _publisher.PublishAsync(Arg.Any<ITransportEnvelope>(), Arg.Any<IEndpointAddress>(), Arg.Any<CancellationToken>())
+            .ThrowsAsync(new ArgumentException("Unexpected transport failure"));
+
+        await _sut.DispatchPendingAsync();
+
+        await _reader.Received(1).ReleaseForRetryAsync(
+            message.Id,
+            1,
+            Arg.Any<DateTimeOffset>(),
+            Arg.Is<string?>(s => s != null && s.Contains("Unexpected transport failure")),
+            Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
     public async Task DispatchPendingAsync_WhenRetriesExhausted_DeadLetters()
     {
         var message = CreatePendingMessage(retryCount: 2);

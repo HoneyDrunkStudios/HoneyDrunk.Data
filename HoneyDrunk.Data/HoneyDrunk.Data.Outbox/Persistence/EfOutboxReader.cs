@@ -53,7 +53,7 @@ public sealed class EfOutboxReader<TContext>(
 
         // Eligible: Pending + ready, OR Leased with expired lease (crashed dispatcher recovery)
         var candidates = await pendingAndReady
-            .Union(leasedAndExpired)
+            .Concat(leasedAndExpired)
             .AsNoTracking()
             .OrderBy(m => m.OccurredAt)
             .Take(batchSize)
