@@ -8,10 +8,10 @@
 
     <!-- Package Metadata -->
     <PackageId>HoneyDrunk.Data</PackageId>
-    <Version>0.3.0</Version>
+    <Version>0.4.0</Version>
     <Authors>HoneyDrunk Studios</Authors>
     <Description>Provider-neutral persistence orchestration layer for HoneyDrunk.OS Grid. Complete architecture overhaul with Kernel integration for tenant resolution, correlation tracking, and telemetry enrichment. Does not depend on any specific database provider.</Description>
-    <PackageReleaseNotes>v0.3.0: Canary test coverage for Kernel context, outbox concurrency, and transport boundary invariants. No functional changes from v0.2.0.</PackageReleaseNotes>
+    <PackageReleaseNotes>v0.4.0: ADR-0005/0006 rollout with Vault-backed SQL secrets, App Configuration bootstrap, Event Grid invalidation, and coordinated package train bump.</PackageReleaseNotes>
     <PackageTags>data;persistence;orchestration;multi-tenant;telemetry;correlation;kernel;grid</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
@@ -31,8 +31,15 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.5" />
-    <PackageReference Include="Microsoft.Extensions.Options" Version="10.0.5" />
+    <PackageReference Include="HoneyDrunk.Vault.EventGrid" Version="0.3.0" />
+    <PackageReference Include="HoneyDrunk.Vault.Providers.AppConfiguration" Version="0.3.0" />
+    <PackageReference Include="HoneyDrunk.Vault.Providers.AzureKeyVault" Version="0.3.0" />
+
+
+  </ItemGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
 
   <ItemGroup>

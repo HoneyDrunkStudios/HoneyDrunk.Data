@@ -58,15 +58,15 @@ public sealed class SqlServerHealthContributor<TContext> : IDataHealthContributo
         }
         catch (SqlException ex)
         {
-            return DataHealthResult.Unhealthy($"SQL Server health check failed: {ex.Message}");
+            return DataHealthResult.Unhealthy($"SQL Server health check failed with error {ex.Number}");
         }
         catch (ArgumentException ex)
         {
-            return DataHealthResult.Unhealthy($"Unexpected error during health check: {ex.Message}");
+            return DataHealthResult.Unhealthy($"Unexpected error during health check: {ex.GetType().Name}");
         }
         catch (InvalidOperationException ex)
         {
-            return DataHealthResult.Unhealthy($"Unexpected error during health check: {ex.Message}");
+            return DataHealthResult.Unhealthy($"Unexpected error during health check: {ex.GetType().Name}");
         }
     }
 }

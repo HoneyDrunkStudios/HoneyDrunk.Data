@@ -1,8 +1,14 @@
 // Copyright (c) HoneyDrunk Studios. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+using HoneyDrunk.Data.Configuration;
+using HoneyDrunk.Kernel.Abstractions.Hosting;
+using HoneyDrunk.Vault.Abstractions;
+using HoneyDrunk.Vault.Models;
+using HoneyDrunk.Vault.Providers.AzureKeyVault.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace HoneyDrunk.Data.Migrations.Factories;
 
@@ -21,6 +27,11 @@ public abstract class MigrationDbContextFactory<TContext> : IDesignTimeDbContext
     protected virtual string? MigrationsAssembly => GetType().Assembly.GetName().Name;
 
     /// <summary>
+    /// Gets the Key Vault secret name used for migration connections.
+    /// </summary>
+    protected virtual string MigrationConnectionSecretName => SecretNameConventions.SqlConnection("Migration");
+
+    /// <summary>
     /// Creates a new DbContext instance for design-time operations.
     /// </summary>
     /// <param name="args">Command-line arguments (unused).</param>
@@ -36,24 +47,37 @@ public abstract class MigrationDbContextFactory<TContext> : IDesignTimeDbContext
 
     /// <summary>
     /// Gets the connection string for migrations.
-    /// Override this to provide a custom connection string.
+    /// Override this only to provide an alternate <see cref="ISecretStore"/>-backed resolution path.
     /// </summary>
     /// <remarks>
-    /// By default, looks for the HONEYDRUNK_MIGRATION_CONNECTION environment variable.
+    /// By default, bootstraps HoneyDrunk.Vault from <c>AZURE_KEYVAULT_URI</c> and resolves
+    /// <see cref="MigrationConnectionSecretName"/> without pinning a secret version.
     /// </remarks>
     /// <returns>The connection string for migrations.</returns>
     protected virtual string GetConnectionString()
     {
-        var connectionString = Environment.GetEnvironmentVariable("HONEYDRUNK_MIGRATION_CONNECTION");
+        using var provider = CreateMigrationServiceProvider();
+        var secretStore = provider.GetRequiredService<ISecretStore>();
+        var secret = secretStore
+            .GetSecretAsync(new SecretIdentifier(MigrationConnectionSecretName))
+            .GetAwaiter()
+            .GetResult();
 
-        if (string.IsNullOrEmpty(connectionString))
-        {
-            throw new InvalidOperationException(
-                "Migration connection string not found. " +
-                "Set the HONEYDRUNK_MIGRATION_CONNECTION environment variable or override GetConnectionString().");
-        }
+        return secret.Value;
+    }
 
-        return connectionString;
+    /// <summary>
+    /// Creates the service provider used by design-time migration tooling.
+    /// </summary>
+    /// <returns>A service provider with Vault bootstrap services registered.</returns>
+    protected virtual ServiceProvider CreateMigrationServiceProvider()
+    {
+        var services = new ServiceCollection();
+        var builder = new MigrationHoneyDrunkBuilder(services);
+
+        builder.AddVaultWithAzureKeyVaultBootstrap();
+
+        return services.BuildServiceProvider();
     }
 
     /// <summary>
@@ -81,4 +105,9 @@ public abstract class MigrationDbContextFactory<TContext> : IDesignTimeDbContext
     /// <param name="options">The configured options.</param>
     /// <returns>A new DbContext instance.</returns>
     protected abstract TContext CreateContext(DbContextOptions<TContext> options);
+
+    private sealed class MigrationHoneyDrunkBuilder(IServiceCollection services) : IHoneyDrunkBuilder
+    {
+        public IServiceCollection Services { get; } = services;
+    }
 }

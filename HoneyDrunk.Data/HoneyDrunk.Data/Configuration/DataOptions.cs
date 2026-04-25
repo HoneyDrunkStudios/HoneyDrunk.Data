@@ -9,9 +9,9 @@ namespace HoneyDrunk.Data.Configuration;
 public sealed class DataOptions
 {
     /// <summary>
-    /// Gets or sets the default connection string name to use when tenant-specific resolution is not available.
+    /// Gets or sets the default SQL connection secret name to use when tenant-specific resolution is not available.
     /// </summary>
-    public string DefaultConnectionStringName { get; set; } = "Default";
+    public string DefaultSqlConnectionSecretName { get; set; } = SecretNameConventions.SqlConnection("Default");
 
     /// <summary>
     /// Gets or sets a value indicating whether to enable query tagging with correlation information.

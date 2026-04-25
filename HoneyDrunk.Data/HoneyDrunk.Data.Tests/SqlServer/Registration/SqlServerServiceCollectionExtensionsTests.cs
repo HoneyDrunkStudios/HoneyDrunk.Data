@@ -3,6 +3,9 @@
 
 using HoneyDrunk.Data.SqlServer.Registration;
 using HoneyDrunk.Data.Tests.TestFixtures;
+using HoneyDrunk.Vault.Abstractions;
+using HoneyDrunk.Vault.Models;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace HoneyDrunk.Data.Tests.SqlServer.Registration;
@@ -30,12 +33,12 @@ public sealed class SqlServerServiceCollectionExtensionsTests
     }
 
     [Fact]
-    public void AddHoneyDrunkDataSqlServer_WithMissingConnectionString_ThrowsOnBuild()
+    public void AddHoneyDrunkDataSqlServer_WithMissingSecretStore_ThrowsOnResolve()
     {
         var services = new ServiceCollection();
         services.AddHoneyDrunkDataSqlServer<TestDbContext>(options =>
         {
-            // ConnectionString not set
+            options.UseConnectionPurpose("Default");
         });
 
         var provider = services.BuildServiceProvider();
@@ -48,10 +51,11 @@ public sealed class SqlServerServiceCollectionExtensionsTests
     public void AddHoneyDrunkDataSqlServer_ReturnsSameServiceCollection()
     {
         var services = new ServiceCollection();
+        services.AddSingleton<ISecretStore>(new RotatingSecretStore("Server=test;Database=test"));
 
         var result = services.AddHoneyDrunkDataSqlServer<TestDbContext>(options =>
         {
-            options.ConnectionString = "Server=test;Database=test";
+            options.UseConnectionPurpose("Default");
         });
 
         Assert.Same(services, result);
@@ -92,12 +96,12 @@ public sealed class SqlServerServiceCollectionExtensionsTests
     }
 
     [Fact]
-    public void AddHoneyDrunkDataAzureSql_WithMissingConnectionString_ThrowsOnBuild()
+    public void AddHoneyDrunkDataAzureSql_WithMissingSecretStore_ThrowsOnResolve()
     {
         var services = new ServiceCollection();
         services.AddHoneyDrunkDataAzureSql<TestDbContext>(options =>
         {
-            // ConnectionString not set
+            options.UseConnectionPurpose("Default");
         });
 
         var provider = services.BuildServiceProvider();
@@ -110,10 +114,11 @@ public sealed class SqlServerServiceCollectionExtensionsTests
     public void AddHoneyDrunkDataAzureSql_ReturnsSameServiceCollection()
     {
         var services = new ServiceCollection();
+        services.AddSingleton<ISecretStore>(new RotatingSecretStore("Server=test.database.windows.net;Database=test"));
 
         var result = services.AddHoneyDrunkDataAzureSql<TestDbContext>(options =>
         {
-            options.ConnectionString = "Server=test.database.windows.net;Database=test";
+            options.UseConnectionPurpose("Default");
         });
 
         Assert.Same(services, result);
@@ -124,9 +129,10 @@ public sealed class SqlServerServiceCollectionExtensionsTests
     {
         var services = new ServiceCollection();
         var efOptionsConfigured = false;
+        services.AddSingleton<ISecretStore>(new RotatingSecretStore("Server=test;Database=test"));
 
         services.AddHoneyDrunkDataSqlServer<TestDbContext>(
-            options => options.ConnectionString = "Server=test;Database=test",
+            options => options.UseConnectionPurpose("Default"),
             efOptions =>
             {
                 efOptionsConfigured = true;
@@ -134,5 +140,77 @@ public sealed class SqlServerServiceCollectionExtensionsTests
             });
 
         Assert.True(efOptionsConfigured);
+    }
+
+    [Fact]
+    public void AddHoneyDrunkDataSqlServer_ResolvesLatestSecretPerDbContext()
+    {
+        var secretStore = new RotatingSecretStore(
+            "Server=first;Database=test",
+            "Server=second;Database=test",
+            "Server=third;Database=test",
+            "Server=fourth;Database=test");
+        var services = new ServiceCollection();
+        services.AddSingleton<ISecretStore>(secretStore);
+        services.AddHoneyDrunkDataSqlServer<TestDbContext>(options => options.UseConnectionPurpose("Default"));
+
+        var provider = services.BuildServiceProvider();
+
+        var first = provider.GetRequiredService<TestDbContext>();
+        var firstResolvedValue = secretStore.LastReturnedValue;
+        var second = provider.GetRequiredService<TestDbContext>();
+        var secondResolvedValue = secretStore.LastReturnedValue;
+
+        Assert.Contains(GetServerName(firstResolvedValue), first.Database.GetConnectionString(), StringComparison.Ordinal);
+        Assert.Contains(GetServerName(secondResolvedValue), second.Database.GetConnectionString(), StringComparison.Ordinal);
+        Assert.All(secretStore.RequestedIdentifiers, identifier => Assert.Null(identifier.Version));
+        Assert.All(secretStore.RequestedIdentifiers, identifier => Assert.Equal("Sql--DefaultConnection", identifier.Name));
+    }
+
+    private static string GetServerName(string connectionString)
+    {
+        var start = connectionString.IndexOf("Server=", StringComparison.Ordinal);
+        if (start < 0)
+        {
+            return connectionString;
+        }
+
+        start += "Server=".Length;
+        var end = connectionString.IndexOf(';', start);
+
+        return end < 0 ? connectionString[start..] : connectionString[start..end];
+    }
+
+    private sealed class RotatingSecretStore(params string[] values) : ISecretStore
+    {
+        private readonly Queue<string> _values = new(values);
+
+        public List<SecretIdentifier> RequestedIdentifiers { get; } = [];
+
+        public string LastReturnedValue { get; private set; } = values[0];
+
+        public Task<SecretValue> GetSecretAsync(SecretIdentifier identifier, CancellationToken cancellationToken = default)
+        {
+            RequestedIdentifiers.Add(identifier);
+
+            var value = _values.Count > 1 ? _values.Dequeue() : _values.Peek();
+            LastReturnedValue = value;
+
+            return Task.FromResult(new SecretValue(identifier, value, version: null));
+        }
+
+        public Task<VaultResult<SecretValue>> TryGetSecretAsync(
+            SecretIdentifier identifier,
+            CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult(VaultResult.Success(new SecretValue(identifier, _values.Peek(), version: null)));
+        }
+
+        public Task<IReadOnlyList<SecretVersion>> ListSecretVersionsAsync(
+            string secretName,
+            CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult<IReadOnlyList<SecretVersion>>([]);
+        }
     }
 }

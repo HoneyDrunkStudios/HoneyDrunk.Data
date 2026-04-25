@@ -61,14 +61,14 @@ public sealed class ServiceCollectionExtensionsTests
 
         services.AddHoneyDrunkData(options =>
         {
-            options.DefaultConnectionStringName = "CustomConnection";
+            options.DefaultSqlConnectionSecretName = "Sql--CustomConnection";
             options.EnableQueryTagging = false;
         });
 
         var provider = services.BuildServiceProvider();
         var optionsAccessor = provider.GetRequiredService<IOptions<DataOptions>>();
 
-        Assert.Equal("CustomConnection", optionsAccessor.Value.DefaultConnectionStringName);
+        Assert.Equal("Sql--CustomConnection", optionsAccessor.Value.DefaultSqlConnectionSecretName);
         Assert.False(optionsAccessor.Value.EnableQueryTagging);
     }
 

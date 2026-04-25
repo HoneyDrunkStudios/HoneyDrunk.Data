@@ -5,6 +5,14 @@ All notable changes to HoneyDrunk.Data.Migrations will be documented in this fil
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.0] - 2026-04-25
+
+### Changed
+
+- `MigrationDbContextFactory<TContext>` now bootstraps HoneyDrunk.Vault from `AZURE_KEYVAULT_URI` and resolves `Sql--MigrationConnection` through `ISecretStore`.
+- Removed the `HONEYDRUNK_MIGRATION_CONNECTION` secret-bearing environment variable path.
+- Package version bumped to `0.4.0`.
+
 ## [0.3.0] - 2026-02-15
 
 ### Added

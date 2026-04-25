@@ -2,6 +2,8 @@
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
 using HoneyDrunk.Data.EntityFramework.Registration;
+using HoneyDrunk.Vault.Abstractions;
+using HoneyDrunk.Vault.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -33,7 +35,7 @@ public static class ServiceCollectionExtensions
         configureSqlServer(sqlOptions);
 
         return services.AddHoneyDrunkDataEntityFramework<TContext>(
-            options => ConfigureSqlServer(options, sqlOptions),
+            (sp, options) => ConfigureSqlServer(sp, options, sqlOptions),
             configureEfOptions);
     }
 
@@ -59,7 +61,7 @@ public static class ServiceCollectionExtensions
             {
                 var sqlOptions = new SqlServerDataOptions();
                 configureSqlServer(sp, sqlOptions);
-                ConfigureSqlServer(options, sqlOptions);
+                ConfigureSqlServer(sp, options, sqlOptions);
             },
             configureEfOptions);
     }
@@ -87,18 +89,18 @@ public static class ServiceCollectionExtensions
         configureSqlServer(sqlOptions);
 
         return services.AddHoneyDrunkDataEntityFramework<TContext>(
-            options => ConfigureAzureSql(options, sqlOptions),
+            (sp, options) => ConfigureAzureSql(sp, options, sqlOptions),
             configureEfOptions);
     }
 
-    private static void ConfigureSqlServer(DbContextOptionsBuilder options, SqlServerDataOptions sqlOptions)
+    private static void ConfigureSqlServer(
+        IServiceProvider serviceProvider,
+        DbContextOptionsBuilder options,
+        SqlServerDataOptions sqlOptions)
     {
-        if (string.IsNullOrEmpty(sqlOptions.ConnectionString))
-        {
-            throw new InvalidOperationException("SQL Server connection string is required.");
-        }
+        var connectionString = ResolveConnectionString(serviceProvider, sqlOptions, "SQL Server");
 
-        options.UseSqlServer(sqlOptions.ConnectionString, sqlServerOptions =>
+        options.UseSqlServer(connectionString, sqlServerOptions =>
         {
             if (sqlOptions.EnableRetryOnFailure)
             {
@@ -115,14 +117,14 @@ public static class ServiceCollectionExtensions
         });
     }
 
-    private static void ConfigureAzureSql(DbContextOptionsBuilder options, SqlServerDataOptions sqlOptions)
+    private static void ConfigureAzureSql(
+        IServiceProvider serviceProvider,
+        DbContextOptionsBuilder options,
+        SqlServerDataOptions sqlOptions)
     {
-        if (string.IsNullOrEmpty(sqlOptions.ConnectionString))
-        {
-            throw new InvalidOperationException("Azure SQL connection string is required.");
-        }
+        var connectionString = ResolveConnectionString(serviceProvider, sqlOptions, "Azure SQL");
 
-        options.UseAzureSql(sqlOptions.ConnectionString, azureSqlOptions =>
+        options.UseAzureSql(connectionString, azureSqlOptions =>
         {
             if (sqlOptions.EnableRetryOnFailure)
             {
@@ -137,5 +139,26 @@ public static class ServiceCollectionExtensions
                 azureSqlOptions.CommandTimeout(sqlOptions.CommandTimeoutSeconds.Value);
             }
         });
+    }
+
+    private static string ResolveConnectionString(
+        IServiceProvider serviceProvider,
+        SqlServerDataOptions sqlOptions,
+        string providerName)
+    {
+        if (string.IsNullOrWhiteSpace(sqlOptions.ConnectionSecretName))
+        {
+            throw new InvalidOperationException($"{providerName} connection secret name is required.");
+        }
+
+        var secretStore = serviceProvider.GetService<ISecretStore>()
+            ?? throw new InvalidOperationException(
+                "ISecretStore is required for SQL connection resolution. " +
+                "Call AddHoneyDrunkDataBootstrap() or register HoneyDrunk.Vault before adding SQL Server data services.");
+
+        var identifier = new SecretIdentifier(sqlOptions.ConnectionSecretName);
+        var secret = secretStore.GetSecretAsync(identifier).GetAwaiter().GetResult();
+
+        return secret.Value;
     }
 }
