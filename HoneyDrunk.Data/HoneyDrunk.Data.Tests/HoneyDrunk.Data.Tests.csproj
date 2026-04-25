@@ -44,6 +44,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\HoneyDrunk.Data.Abstractions\HoneyDrunk.Data.Abstractions.csproj" />
+    <ProjectReference Include="..\HoneyDrunk.Data.AspNetCore\HoneyDrunk.Data.AspNetCore.csproj" />
     <ProjectReference Include="..\HoneyDrunk.Data\HoneyDrunk.Data.csproj" />
     <ProjectReference Include="..\HoneyDrunk.Data.EntityFramework\HoneyDrunk.Data.EntityFramework.csproj" />
     <ProjectReference Include="..\HoneyDrunk.Data.Outbox.Abstractions\HoneyDrunk.Data.Outbox.Abstractions.csproj" />

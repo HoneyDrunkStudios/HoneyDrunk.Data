@@ -9,8 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- `AddHoneyDrunkDataBootstrap()` for env-driven Key Vault, App Configuration label `honeydrunk-data`, and Event Grid invalidation service registration.
-- `MapHoneyDrunkDataVaultInvalidationWebhook()` for `/internal/vault/invalidate`.
+- `AddHoneyDrunkDataBootstrap()` for env-driven Key Vault and App Configuration label `honeydrunk-data`.
 - `SecretNameConventions.SqlConnection()` for provider-grouped SQL secret names.
 - Package version bumped to `0.4.0`.
 

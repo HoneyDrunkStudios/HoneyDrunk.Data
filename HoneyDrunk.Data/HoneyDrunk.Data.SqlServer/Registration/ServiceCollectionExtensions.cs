@@ -157,7 +157,7 @@ public static class ServiceCollectionExtensions
                 "Call AddHoneyDrunkDataBootstrap() or register HoneyDrunk.Vault before adding SQL Server data services.");
 
         var identifier = new SecretIdentifier(sqlOptions.ConnectionSecretName);
-        var secret = secretStore.GetSecretAsync(identifier).GetAwaiter().GetResult();
+        var secret = secretStore.GetSecretAsync(identifier).ConfigureAwait(false).GetAwaiter().GetResult();
 
         return secret.Value;
     }

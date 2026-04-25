@@ -87,6 +87,7 @@ jobs:
           nuget-packages: |
             HoneyDrunk.Data.Abstractions
             HoneyDrunk.Data
+            HoneyDrunk.Data.AspNetCore
             HoneyDrunk.Data.EntityFramework
             HoneyDrunk.Data.SqlServer
             HoneyDrunk.Data.Migrations

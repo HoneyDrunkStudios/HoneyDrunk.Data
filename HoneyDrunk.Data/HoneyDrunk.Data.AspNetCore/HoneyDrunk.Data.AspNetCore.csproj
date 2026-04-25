@@ -1,19 +1,19 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);CA1873</NoWarn>
 
     <!-- Package Metadata -->
-    <PackageId>HoneyDrunk.Data</PackageId>
+    <PackageId>HoneyDrunk.Data.AspNetCore</PackageId>
     <Version>0.4.0</Version>
     <Authors>HoneyDrunk Studios</Authors>
-    <Description>Provider-neutral persistence orchestration layer for HoneyDrunk.OS Grid. Complete architecture overhaul with Kernel integration for tenant resolution, correlation tracking, and telemetry enrichment. Does not depend on any specific database provider.</Description>
-    <PackageReleaseNotes>v0.4.0: ADR-0005/0006 rollout with Vault-backed SQL secrets, App Configuration bootstrap, and coordinated package train bump.</PackageReleaseNotes>
-
-    <PackageTags>data;persistence;orchestration;multi-tenant;telemetry;correlation;kernel;grid</PackageTags>
+    <Description>ASP.NET Core integration for HoneyDrunk.Data. Provides Event Grid Vault cache invalidation endpoint helpers for ADR-0006 secret rotation propagation.</Description>
+    <PackageReleaseNotes>v0.4.0: Added ASP.NET Core Vault invalidation helpers for the ADR-0005/0006 Data rollout.</PackageReleaseNotes>
+    <PackageTags>data;persistence;aspnetcore;eventgrid;vault;cache;rotation;webhook</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <RepositoryUrl>https://github.com/HoneyDrunkStudios/HoneyDrunk.Data</RepositoryUrl>
@@ -26,18 +26,20 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="HoneyDrunk.Kernel" Version="0.4.0" />
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="HoneyDrunk.Kernel.Abstractions" Version="0.4.0" />
     <PackageReference Include="HoneyDrunk.Standards" Version="0.2.7">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="HoneyDrunk.Vault.Providers.AppConfiguration" Version="0.3.0" />
-    <PackageReference Include="HoneyDrunk.Vault.Providers.AzureKeyVault" Version="0.3.0" />
+    <PackageReference Include="HoneyDrunk.Vault.EventGrid" Version="0.3.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\HoneyDrunk.Data.Abstractions\HoneyDrunk.Data.Abstractions.csproj" />
+    <ProjectReference Include="..\HoneyDrunk.Data\HoneyDrunk.Data.csproj" />
   </ItemGroup>
 
   <ItemGroup>

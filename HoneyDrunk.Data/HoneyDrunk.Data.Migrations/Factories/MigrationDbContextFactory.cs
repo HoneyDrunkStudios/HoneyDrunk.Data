@@ -60,6 +60,7 @@ public abstract class MigrationDbContextFactory<TContext> : IDesignTimeDbContext
         var secretStore = provider.GetRequiredService<ISecretStore>();
         var secret = secretStore
             .GetSecretAsync(new SecretIdentifier(MigrationConnectionSecretName))
+            .ConfigureAwait(false)
             .GetAwaiter()
             .GetResult();
 

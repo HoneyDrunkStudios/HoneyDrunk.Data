@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 **Note:** See individual package CHANGELOGs for detailed changes:
 - [HoneyDrunk.Data.Abstractions CHANGELOG](HoneyDrunk.Data.Abstractions/CHANGELOG.md)
 - [HoneyDrunk.Data CHANGELOG](HoneyDrunk.Data/CHANGELOG.md)
+- [HoneyDrunk.Data.AspNetCore CHANGELOG](HoneyDrunk.Data.AspNetCore/CHANGELOG.md)
 - [HoneyDrunk.Data.EntityFramework CHANGELOG](HoneyDrunk.Data.EntityFramework/CHANGELOG.md)
 - [HoneyDrunk.Data.SqlServer CHANGELOG](HoneyDrunk.Data.SqlServer/CHANGELOG.md)
 - [HoneyDrunk.Data.Migrations CHANGELOG](HoneyDrunk.Data.Migrations/CHANGELOG.md)
@@ -22,7 +23,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- ADR-0005/0006 bootstrap wiring for HoneyDrunk.Data via env-driven Key Vault, App Configuration, and Event Grid invalidation helpers.
+- ADR-0005/0006 bootstrap wiring for HoneyDrunk.Data via env-driven Key Vault and App Configuration helpers.
+- `HoneyDrunk.Data.AspNetCore` package with Event Grid invalidation service and endpoint helpers.
 - Provider-grouped SQL secret naming with the `Sql--{Purpose}Connection` convention.
 - Coordinated all package project versions to `0.4.0`.
 

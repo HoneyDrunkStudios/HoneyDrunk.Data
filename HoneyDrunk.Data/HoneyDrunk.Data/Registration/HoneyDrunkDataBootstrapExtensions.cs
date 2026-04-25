@@ -2,11 +2,8 @@
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
 using HoneyDrunk.Kernel.Abstractions.Hosting;
-using HoneyDrunk.Vault.EventGrid.Extensions;
 using HoneyDrunk.Vault.Providers.AppConfiguration.Extensions;
 using HoneyDrunk.Vault.Providers.AzureKeyVault.Extensions;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -22,15 +19,10 @@ public static class HoneyDrunkDataBootstrapExtensions
     /// </summary>
     public const string DataAppConfigurationLabel = "honeydrunk-data";
 
-    /// <summary>
-    /// The default Event Grid cache invalidation route.
-    /// </summary>
-    public const string VaultInvalidationRoute = "/internal/vault/invalidate";
-
     private const string NodeIdSetting = "HONEYDRUNK_NODE_ID";
 
     /// <summary>
-    /// Adds env-var-driven Key Vault, App Configuration, and Event Grid invalidation services for HoneyDrunk.Data.
+    /// Adds env-var-driven Key Vault and App Configuration services for HoneyDrunk.Data.
     /// </summary>
     /// <param name="builder">The HoneyDrunk builder.</param>
     /// <returns>The builder for chaining.</returns>
@@ -42,24 +34,8 @@ public static class HoneyDrunkDataBootstrapExtensions
 
         builder.AddVaultWithAzureKeyVaultBootstrap();
         builder.AddAppConfiguration();
-        builder.Services.AddVaultEventGridInvalidation();
 
         return builder;
-    }
-
-    /// <summary>
-    /// Maps the Data Vault cache invalidation webhook.
-    /// </summary>
-    /// <param name="endpoints">The endpoint route builder.</param>
-    /// <param name="pattern">The route pattern.</param>
-    /// <returns>The endpoint convention builder.</returns>
-    public static IEndpointConventionBuilder MapHoneyDrunkDataVaultInvalidationWebhook(
-        this IEndpointRouteBuilder endpoints,
-        string pattern = VaultInvalidationRoute)
-    {
-        ArgumentNullException.ThrowIfNull(endpoints);
-
-        return endpoints.MapVaultInvalidationWebhook(pattern);
     }
 
     private static void EnsureDataAppConfigurationLabel(IServiceCollection services)

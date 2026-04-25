@@ -181,13 +181,26 @@ public sealed class SqlServerServiceCollectionExtensionsTests
         return end < 0 ? connectionString[start..] : connectionString[start..end];
     }
 
-    private sealed class RotatingSecretStore(params string[] values) : ISecretStore
+    private sealed class RotatingSecretStore : ISecretStore
     {
-        private readonly Queue<string> _values = new(values);
+        private readonly Queue<string> _values;
+
+        public RotatingSecretStore(params string[] values)
+        {
+            ArgumentNullException.ThrowIfNull(values);
+
+            if (values.Length == 0)
+            {
+                throw new ArgumentException("At least one secret value must be provided.", nameof(values));
+            }
+
+            _values = new Queue<string>(values);
+            LastReturnedValue = values[0];
+        }
 
         public List<SecretIdentifier> RequestedIdentifiers { get; } = [];
 
-        public string LastReturnedValue { get; private set; } = values[0];
+        public string LastReturnedValue { get; private set; }
 
         public Task<SecretValue> GetSecretAsync(SecretIdentifier identifier, CancellationToken cancellationToken = default)
         {

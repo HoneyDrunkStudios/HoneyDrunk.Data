@@ -1,31 +1,28 @@
 // Copyright (c) HoneyDrunk Studios. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-using HoneyDrunk.Data.Registration;
+using HoneyDrunk.Data.AspNetCore.Registration;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace HoneyDrunk.Data.Tests.Registration;
 
 /// <summary>
-/// Unit tests for <see cref="HoneyDrunkDataBootstrapExtensions"/>.
+/// Unit tests for <see cref="HoneyDrunkDataAspNetCoreExtensions"/>.
 /// </summary>
 public sealed class HoneyDrunkDataBootstrapExtensionsTests
 {
     [Fact]
-    public async Task MapHoneyDrunkDataVaultInvalidationWebhook_MapsInternalRoute()
+    public void MapHoneyDrunkDataVaultInvalidationWebhook_MapsInternalRoute()
     {
         var builder = WebApplication.CreateBuilder();
         var app = builder.Build();
 
         app.MapHoneyDrunkDataVaultInvalidationWebhook();
-        await app.StartAsync();
 
-        var endpoint = Assert.Single(app.Services.GetRequiredService<EndpointDataSource>().Endpoints);
+        var endpoints = ((IEndpointRouteBuilder)app).DataSources.SelectMany(source => source.Endpoints);
+        var endpoint = Assert.Single(endpoints);
         var routeEndpoint = Assert.IsType<RouteEndpoint>(endpoint);
-        Assert.Equal(HoneyDrunkDataBootstrapExtensions.VaultInvalidationRoute, routeEndpoint.RoutePattern.RawText);
-
-        await app.StopAsync();
+        Assert.Equal(HoneyDrunkDataAspNetCoreExtensions.VaultInvalidationRoute, routeEndpoint.RoutePattern.RawText);
     }
 }
