@@ -35,7 +35,7 @@ public static class ServiceCollectionExtensions
 
         services.Configure<DataOptions>(opts =>
         {
-            opts.DefaultConnectionStringName = options.DefaultConnectionStringName;
+            opts.DefaultSqlConnectionSecretName = options.DefaultSqlConnectionSecretName;
             opts.EnableQueryTagging = options.EnableQueryTagging;
             opts.RequireKernelContext = options.RequireKernelContext;
             opts.ActivitySourceName = options.ActivitySourceName;

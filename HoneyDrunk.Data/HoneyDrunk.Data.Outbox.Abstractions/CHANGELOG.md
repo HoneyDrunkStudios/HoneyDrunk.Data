@@ -1,5 +1,9 @@
 # Changelog — HoneyDrunk.Data.Outbox.Abstractions
 
+## 0.4.0
+
+- Coordinated package train bump for the ADR-0005/0006 Data rollout.
+
 ## 0.3.0
 
 - Canary test coverage for outbox concurrency invariants (no double-dispatch, deterministic state transitions) and transport boundary isolation.

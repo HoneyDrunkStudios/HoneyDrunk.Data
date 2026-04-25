@@ -11,22 +11,22 @@ namespace HoneyDrunk.Data.Tests.Configuration;
 public sealed class DataOptionsTests
 {
     [Fact]
-    public void DefaultConnectionStringName_DefaultIsDefault()
+    public void DefaultSqlConnectionSecretName_UsesProviderGroupedDefault()
     {
         var options = new DataOptions();
 
-        Assert.Equal("Default", options.DefaultConnectionStringName);
+        Assert.Equal("Sql--DefaultConnection", options.DefaultSqlConnectionSecretName);
     }
 
     [Fact]
-    public void DefaultConnectionStringName_CanBeChanged()
+    public void DefaultSqlConnectionSecretName_CanBeChanged()
     {
         var options = new DataOptions
         {
-            DefaultConnectionStringName = "CustomConnection",
+            DefaultSqlConnectionSecretName = "Sql--CustomConnection",
         };
 
-        Assert.Equal("CustomConnection", options.DefaultConnectionStringName);
+        Assert.Equal("Sql--CustomConnection", options.DefaultSqlConnectionSecretName);
     }
 
     [Fact]

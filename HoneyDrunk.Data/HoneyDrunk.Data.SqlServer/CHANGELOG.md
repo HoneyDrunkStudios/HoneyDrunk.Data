@@ -5,6 +5,15 @@ All notable changes to HoneyDrunk.Data.SqlServer will be documented in this file
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.0] - 2026-04-25
+
+### Changed
+
+- SQL Server and Azure SQL registration now resolve connection strings through `ISecretStore` using unversioned `SecretIdentifier` values.
+- `SqlServerDataOptions` now configures `ConnectionSecretName`, with `UseConnectionPurpose()` applying `Sql--{Purpose}Connection`.
+- SQL health failures no longer include provider exception messages that could contain sensitive context.
+- Package version bumped to `0.4.0`.
+
 ## [0.3.0] - 2026-02-15
 
 ### Added

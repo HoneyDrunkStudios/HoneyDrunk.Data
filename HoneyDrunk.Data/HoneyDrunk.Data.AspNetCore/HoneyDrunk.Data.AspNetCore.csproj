@@ -1,18 +1,19 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);CA1873</NoWarn>
 
     <!-- Package Metadata -->
-    <PackageId>HoneyDrunk.Data.EntityFramework</PackageId>
+    <PackageId>HoneyDrunk.Data.AspNetCore</PackageId>
     <Version>0.4.0</Version>
     <Authors>HoneyDrunk Studios</Authors>
-    <Description>Entity Framework Core provider implementation for HoneyDrunk.Data. Complete architecture overhaul with tenant-aware DbContext, repository pattern, unit of work, command interceptors for correlation tracking, and health contributors.</Description>
-    <PackageReleaseNotes>v0.4.0: Coordinated package train bump for the ADR-0005/0006 Data rollout.</PackageReleaseNotes>
-    <PackageTags>data;persistence;entity-framework;ef-core;repository;unit-of-work;multi-tenant;correlation;kernel;grid</PackageTags>
+    <Description>ASP.NET Core integration for HoneyDrunk.Data. Provides Event Grid Vault cache invalidation endpoint helpers for ADR-0006 secret rotation propagation.</Description>
+    <PackageReleaseNotes>v0.4.0: Added ASP.NET Core Vault invalidation helpers for the ADR-0005/0006 Data rollout.</PackageReleaseNotes>
+    <PackageTags>data;persistence;aspnetcore;eventgrid;vault;cache;rotation;webhook</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <RepositoryUrl>https://github.com/HoneyDrunkStudios/HoneyDrunk.Data</RepositoryUrl>
@@ -25,17 +26,19 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="HoneyDrunk.Kernel.Abstractions" Version="0.4.0" />
     <PackageReference Include="HoneyDrunk.Standards" Version="0.2.7">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.7" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="10.0.7" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.7" />
+    <PackageReference Include="HoneyDrunk.Vault.EventGrid" Version="0.3.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\HoneyDrunk.Data.Abstractions\HoneyDrunk.Data.Abstractions.csproj" />
     <ProjectReference Include="..\HoneyDrunk.Data\HoneyDrunk.Data.csproj" />
   </ItemGroup>
 

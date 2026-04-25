@@ -5,6 +5,18 @@ All notable changes to HoneyDrunk.Data will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.0] - 2026-04-25
+
+### Added
+
+- `AddHoneyDrunkDataBootstrap()` for env-driven Key Vault and App Configuration label `honeydrunk-data`.
+- `SecretNameConventions.SqlConnection()` for provider-grouped SQL secret names.
+- Package version bumped to `0.4.0`.
+
+### Changed
+
+- Replaced the default connection-string name option with `DefaultSqlConnectionSecretName`.
+
 ## [0.3.0] - 2026-02-15
 
 ### Added

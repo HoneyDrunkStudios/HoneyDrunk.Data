@@ -11,22 +11,32 @@ namespace HoneyDrunk.Data.Tests.SqlServer.Registration;
 public sealed class SqlServerDataOptionsTests
 {
     [Fact]
-    public void ConnectionString_DefaultIsNull()
+    public void ConnectionSecretName_UsesProviderGroupedDefault()
     {
         var options = new SqlServerDataOptions();
 
-        Assert.Null(options.ConnectionString);
+        Assert.Equal("Sql--DefaultConnection", options.ConnectionSecretName);
     }
 
     [Fact]
-    public void ConnectionString_CanBeSet()
+    public void ConnectionSecretName_CanBeSet()
     {
         var options = new SqlServerDataOptions
         {
-            ConnectionString = "Server=localhost;Database=Test",
+            ConnectionSecretName = "Sql--ReportingConnection",
         };
 
-        Assert.Equal("Server=localhost;Database=Test", options.ConnectionString);
+        Assert.Equal("Sql--ReportingConnection", options.ConnectionSecretName);
+    }
+
+    [Fact]
+    public void UseConnectionPurpose_AppliesProviderGroupedConvention()
+    {
+        var options = new SqlServerDataOptions();
+
+        options.UseConnectionPurpose("Outbox");
+
+        Assert.Equal("Sql--OutboxConnection", options.ConnectionSecretName);
     }
 
     [Fact]
