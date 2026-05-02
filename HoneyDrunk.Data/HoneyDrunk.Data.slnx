@@ -11,14 +11,16 @@
     <File Path="../.github/workflows/weekly-deps.yml" />
   </Folder>
   <Project Path="HoneyDrunk.Data.Abstractions/HoneyDrunk.Data.Abstractions.csproj" />
-  <Project Path="HoneyDrunk.Data.AspNetCore/HoneyDrunk.Data.AspNetCore.csproj" />
+  <Project Path="HoneyDrunk.Data.AspNetCore/HoneyDrunk.Data.AspNetCore.csproj">
+    <Build Solution="Debug|*" Project="false" />
+  </Project>
+  <Project Path="HoneyDrunk.Data.Canary/HoneyDrunk.Data.Canary.csproj" />
   <Project Path="HoneyDrunk.Data.EntityFramework/HoneyDrunk.Data.EntityFramework.csproj" />
   <Project Path="HoneyDrunk.Data.Migrations/HoneyDrunk.Data.Migrations.csproj" />
   <Project Path="HoneyDrunk.Data.Outbox.Abstractions/HoneyDrunk.Data.Outbox.Abstractions.csproj" />
-  <Project Path="HoneyDrunk.Data.Outbox/HoneyDrunk.Data.Outbox.csproj" />
   <Project Path="HoneyDrunk.Data.Outbox.Dispatcher/HoneyDrunk.Data.Outbox.Dispatcher.csproj" />
+  <Project Path="HoneyDrunk.Data.Outbox/HoneyDrunk.Data.Outbox.csproj" />
   <Project Path="HoneyDrunk.Data.SqlServer/HoneyDrunk.Data.SqlServer.csproj" />
-  <Project Path="HoneyDrunk.Data.Canary/HoneyDrunk.Data.Canary.csproj" />
   <Project Path="HoneyDrunk.Data.Testing/HoneyDrunk.Data.Testing.csproj" />
   <Project Path="HoneyDrunk.Data.Tests/HoneyDrunk.Data.Tests.csproj" />
   <Project Path="HoneyDrunk.Data/HoneyDrunk.Data.csproj" />
