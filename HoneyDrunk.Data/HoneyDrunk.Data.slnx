@@ -11,9 +11,7 @@
     <File Path="../.github/workflows/weekly-deps.yml" />
   </Folder>
   <Project Path="HoneyDrunk.Data.Abstractions/HoneyDrunk.Data.Abstractions.csproj" />
-  <Project Path="HoneyDrunk.Data.AspNetCore/HoneyDrunk.Data.AspNetCore.csproj">
-    <Build Solution="Debug|*" Project="false" />
-  </Project>
+  <Project Path="HoneyDrunk.Data.AspNetCore/HoneyDrunk.Data.AspNetCore.csproj" />
   <Project Path="HoneyDrunk.Data.Canary/HoneyDrunk.Data.Canary.csproj" />
   <Project Path="HoneyDrunk.Data.EntityFramework/HoneyDrunk.Data.EntityFramework.csproj" />
   <Project Path="HoneyDrunk.Data.Migrations/HoneyDrunk.Data.Migrations.csproj" />
