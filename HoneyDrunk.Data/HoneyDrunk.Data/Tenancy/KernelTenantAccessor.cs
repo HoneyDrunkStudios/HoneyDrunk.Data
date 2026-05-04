@@ -3,6 +3,7 @@
 
 using HoneyDrunk.Data.Abstractions.Tenancy;
 using HoneyDrunk.Kernel.Abstractions.Context;
+using KernelTenantId = HoneyDrunk.Kernel.Abstractions.Identity.TenantId;
 
 namespace HoneyDrunk.Data.Tenancy;
 
@@ -33,7 +34,7 @@ public sealed class KernelTenantAccessor : ITenantAccessor
             return default;
         }
 
-        var tenantId = context.TenantId;
-        return string.IsNullOrWhiteSpace(tenantId) ? default : TenantId.FromString(tenantId);
+        KernelTenantId kernelTenantId = context.TenantId;
+        return kernelTenantId.IsInternal ? default : TenantId.FromString(kernelTenantId.ToString());
     }
 }

@@ -8,7 +8,7 @@
 
     <!-- Package Metadata -->
     <PackageId>HoneyDrunk.Data.EntityFramework</PackageId>
-    <Version>0.4.0</Version>
+    <Version>0.5.0</Version>
     <Authors>HoneyDrunk Studios</Authors>
     <Description>Entity Framework Core provider implementation for HoneyDrunk.Data. Complete architecture overhaul with tenant-aware DbContext, repository pattern, unit of work, command interceptors for correlation tracking, and health contributors.</Description>
     <PackageReleaseNotes>v0.4.0: Coordinated package train bump for the ADR-0005/0006 Data rollout.</PackageReleaseNotes>

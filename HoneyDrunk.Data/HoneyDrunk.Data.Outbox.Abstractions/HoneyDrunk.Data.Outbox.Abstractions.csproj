@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
@@ -9,7 +9,7 @@
 
     <!-- Package Metadata -->
     <PackageId>HoneyDrunk.Data.Outbox.Abstractions</PackageId>
-    <Version>0.4.0</Version>
+    <Version>0.5.0</Version>
     <Authors>HoneyDrunk Studios</Authors>
     <Description>Pure outbox contracts for HoneyDrunk.Data. Defines IOutboxWriter, IOutboxReader, IOutboxDispatcher, and the OutboxMessage model with lease-based concurrency. No EF Core, SQL, or Transport dependencies.</Description>
     <PackageReleaseNotes>v0.4.0: Coordinated package train bump for the ADR-0005/0006 Data rollout.</PackageReleaseNotes>

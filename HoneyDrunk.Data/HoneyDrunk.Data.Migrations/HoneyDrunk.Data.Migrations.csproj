@@ -8,7 +8,7 @@
 
     <!-- Package Metadata -->
     <PackageId>HoneyDrunk.Data.Migrations</PackageId>
-    <Version>0.4.0</Version>
+    <Version>0.5.0</Version>
     <Authors>HoneyDrunk Studios</Authors>
     <Description>Migration tooling for HoneyDrunk.Data. Complete architecture overhaul with design-time DbContext factories and migration runner helpers for CI/CD scenarios. Not intended for runtime use.</Description>
     <PackageReleaseNotes>v0.4.0: Migration tooling now resolves SQL connections through HoneyDrunk.Vault using env-driven Key Vault bootstrap.</PackageReleaseNotes>

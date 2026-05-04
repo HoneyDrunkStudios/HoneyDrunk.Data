@@ -4,6 +4,7 @@
 using HoneyDrunk.Kernel.Abstractions.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using KernelTenantId = HoneyDrunk.Kernel.Abstractions.Identity.TenantId;
 
 namespace HoneyDrunk.Data.Outbox.Persistence;
 
@@ -63,7 +64,12 @@ public sealed class EfOutboxWriter<TContext>(
             return;
 
         message.CorrelationId ??= context.CorrelationId.ToString();
-        message.TenantId ??= context.TenantId?.ToString();
+
+        KernelTenantId tenantId = context.TenantId;
+        if (!tenantId.IsInternal)
+        {
+            message.TenantId ??= tenantId.ToString();
+        }
     }
 
     private void ValidatePayloadSize(OutboxMessage message)

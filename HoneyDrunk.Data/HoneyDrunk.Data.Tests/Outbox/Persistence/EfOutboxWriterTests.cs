@@ -7,6 +7,7 @@ using HoneyDrunk.Data.Testing.Factories;
 using HoneyDrunk.Data.Tests.TestFixtures;
 using HoneyDrunk.Kernel.Abstractions.Context;
 using Microsoft.Extensions.Options;
+using KernelTenantId = HoneyDrunk.Kernel.Abstractions.Identity.TenantId;
 
 namespace HoneyDrunk.Data.Tests.Outbox.Persistence;
 
@@ -90,7 +91,7 @@ public sealed class EfOutboxWriterTests : IAsyncDisposable
         var accessor = Substitute.For<IOperationContextAccessor>();
         var opContext = Substitute.For<IOperationContext>();
         opContext.CorrelationId.Returns("corr-123");
-        opContext.TenantId.Returns((string)null!);
+        opContext.TenantId.Returns(KernelTenantId.Internal);
         accessor.Current.Returns(opContext);
 
         var writer = CreateWriter(_context, accessor);
@@ -108,8 +109,9 @@ public sealed class EfOutboxWriterTests : IAsyncDisposable
     {
         var accessor = Substitute.For<IOperationContextAccessor>();
         var opContext = Substitute.For<IOperationContext>();
+        var tenantId = KernelTenantId.NewId();
         opContext.CorrelationId.Returns("corr-456");
-        opContext.TenantId.Returns("tenant-abc");
+        opContext.TenantId.Returns(tenantId);
         accessor.Current.Returns(opContext);
 
         var writer = CreateWriter(_context, accessor);
@@ -119,7 +121,7 @@ public sealed class EfOutboxWriterTests : IAsyncDisposable
         await _context.SaveChangesAsync();
 
         var saved = _context.OutboxMessages.Single();
-        Assert.Equal("tenant-abc", saved.TenantId);
+        Assert.Equal(tenantId.ToString(), saved.TenantId);
     }
 
     [Fact]
@@ -147,7 +149,7 @@ public sealed class EfOutboxWriterTests : IAsyncDisposable
         var accessor = Substitute.For<IOperationContextAccessor>();
         var opContext = Substitute.For<IOperationContext>();
         opContext.CorrelationId.Returns("should-not-appear");
-        opContext.TenantId.Returns("should-not-appear");
+        opContext.TenantId.Returns(KernelTenantId.NewId());
         accessor.Current.Returns(opContext);
 
         var options = new OutboxOptions { AutoPopulateFromContext = false };
