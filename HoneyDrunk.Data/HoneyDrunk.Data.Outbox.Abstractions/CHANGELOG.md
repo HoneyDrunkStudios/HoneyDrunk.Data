@@ -1,5 +1,9 @@
 # Changelog — HoneyDrunk.Data.Outbox.Abstractions
 
+## 0.5.1
+
+- Corrected NuGet package release metadata for the 0.5.x release train.
+
 ## 0.4.0
 
 - Coordinated package train bump for the ADR-0005/0006 Data rollout.

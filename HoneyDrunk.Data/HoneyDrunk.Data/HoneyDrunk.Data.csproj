@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
@@ -8,10 +8,10 @@
 
     <!-- Package Metadata -->
     <PackageId>HoneyDrunk.Data</PackageId>
-    <Version>0.5.0</Version>
+    <Version>0.5.1</Version>
     <Authors>HoneyDrunk Studios</Authors>
     <Description>Provider-neutral persistence orchestration layer for HoneyDrunk.OS Grid. Complete architecture overhaul with Kernel integration for tenant resolution, correlation tracking, and telemetry enrichment. Does not depend on any specific database provider.</Description>
-    <PackageReleaseNotes>v0.5.0: Adopt Kernel 0.5.0 typed tenant context values while preserving Data tenant abstractions.</PackageReleaseNotes>
+    <PackageReleaseNotes>v0.5.1: Correct package metadata for the Kernel 0.5.0 typed tenant adoption release train.</PackageReleaseNotes>
 
     <PackageTags>data;persistence;orchestration;multi-tenant;telemetry;correlation;kernel;grid</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>

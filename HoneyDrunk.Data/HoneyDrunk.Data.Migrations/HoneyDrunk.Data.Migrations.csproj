@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
@@ -8,10 +8,10 @@
 
     <!-- Package Metadata -->
     <PackageId>HoneyDrunk.Data.Migrations</PackageId>
-    <Version>0.5.0</Version>
+    <Version>0.5.1</Version>
     <Authors>HoneyDrunk Studios</Authors>
     <Description>Migration tooling for HoneyDrunk.Data. Complete architecture overhaul with design-time DbContext factories and migration runner helpers for CI/CD scenarios. Not intended for runtime use.</Description>
-    <PackageReleaseNotes>v0.4.0: Migration tooling now resolves SQL connections through HoneyDrunk.Vault using env-driven Key Vault bootstrap.</PackageReleaseNotes>
+    <PackageReleaseNotes>v0.5.1: Correct package metadata for the Kernel 0.5.0 typed tenant adoption release train.</PackageReleaseNotes>
     <PackageTags>data;persistence;migrations;ef-core;entity-framework;tooling;ci-cd;kernel;grid</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
