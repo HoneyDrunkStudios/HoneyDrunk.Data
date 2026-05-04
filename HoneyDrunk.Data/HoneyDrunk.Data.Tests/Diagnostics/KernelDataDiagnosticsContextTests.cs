@@ -3,6 +3,7 @@
 
 using HoneyDrunk.Data.Diagnostics;
 using HoneyDrunk.Kernel.Abstractions.Context;
+using KernelTenantId = HoneyDrunk.Kernel.Abstractions.Identity.TenantId;
 
 namespace HoneyDrunk.Data.Tests.Diagnostics;
 
@@ -127,10 +128,11 @@ public sealed class KernelDataDiagnosticsContextTests
         var gridContext = Substitute.For<IGridContext>();
         gridContext.NodeId.Returns("node-id");
 
+        var tenantId = KernelTenantId.NewId();
         var context = Substitute.For<IOperationContext>();
         context.CorrelationId.Returns("corr-id");
         context.OperationId.Returns("op-id");
-        context.TenantId.Returns("tenant-id");
+        context.TenantId.Returns(tenantId);
         context.GridContext.Returns(gridContext);
 
         var accessor = Substitute.For<IOperationContextAccessor>();
@@ -142,7 +144,7 @@ public sealed class KernelDataDiagnosticsContextTests
         Assert.Equal("corr-id", diagnostics.Tags["correlation.id"]);
         Assert.Equal("op-id", diagnostics.Tags["operation.id"]);
         Assert.Equal("node-id", diagnostics.Tags["node.id"]);
-        Assert.Equal("tenant-id", diagnostics.Tags["tenant.id"]);
+        Assert.Equal(tenantId.ToString(), diagnostics.Tags["tenant.id"]);
     }
 
     [Fact]
@@ -151,7 +153,7 @@ public sealed class KernelDataDiagnosticsContextTests
         var context = Substitute.For<IOperationContext>();
         context.CorrelationId.Returns("corr-id");
         context.OperationId.Returns(string.Empty);
-        context.TenantId.Returns((string)null!);
+        context.TenantId.Returns(KernelTenantId.Internal);
         context.GridContext.Returns((IGridContext)null!);
 
         var accessor = Substitute.For<IOperationContextAccessor>();

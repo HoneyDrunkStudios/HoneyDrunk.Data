@@ -8,7 +8,7 @@
 
     <!-- Package Metadata -->
     <PackageId>HoneyDrunk.Data.SqlServer</PackageId>
-    <Version>0.4.0</Version>
+    <Version>0.5.0</Version>
     <Authors>HoneyDrunk Studios</Authors>
     <Description>SQL Server specialization for HoneyDrunk.Data. Complete architecture overhaul with SQL Server and Azure SQL configuration, model conventions, retry-on-failure support, and enhanced health diagnostics.</Description>
     <PackageReleaseNotes>v0.4.0: SQL Server registration now resolves connection strings through HoneyDrunk.Vault using provider-grouped secret names.</PackageReleaseNotes>

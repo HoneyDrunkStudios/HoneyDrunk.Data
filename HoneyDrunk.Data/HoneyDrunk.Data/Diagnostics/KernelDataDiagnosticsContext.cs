@@ -3,6 +3,7 @@
 
 using HoneyDrunk.Data.Abstractions.Diagnostics;
 using HoneyDrunk.Kernel.Abstractions.Context;
+using KernelTenantId = HoneyDrunk.Kernel.Abstractions.Identity.TenantId;
 
 namespace HoneyDrunk.Data.Diagnostics;
 
@@ -65,9 +66,10 @@ public sealed class KernelDataDiagnosticsContext : IDataDiagnosticsContext
                 tags["node.id"] = nodeId;
             }
 
-            if (!string.IsNullOrEmpty(context.TenantId))
+            KernelTenantId tenantId = context.TenantId;
+            if (!tenantId.IsInternal)
             {
-                tags["tenant.id"] = context.TenantId;
+                tags["tenant.id"] = tenantId.ToString();
             }
 
             return tags.AsReadOnly();

@@ -3,6 +3,7 @@
 
 using HoneyDrunk.Data.Tenancy;
 using HoneyDrunk.Kernel.Abstractions.Context;
+using KernelTenantId = HoneyDrunk.Kernel.Abstractions.Identity.TenantId;
 
 namespace HoneyDrunk.Data.Tests.Tenancy;
 
@@ -32,10 +33,10 @@ public sealed class KernelTenantAccessorTests
     }
 
     [Fact]
-    public void GetCurrentTenantId_WhenTenantIdIsNull_ReturnsDefaultTenantId()
+    public void GetCurrentTenantId_WhenTenantIdIsInternal_ReturnsDefaultTenantId()
     {
         var context = Substitute.For<IOperationContext>();
-        context.TenantId.Returns((string)null!);
+        context.TenantId.Returns(KernelTenantId.Internal);
 
         var accessor = Substitute.For<IOperationContextAccessor>();
         accessor.Current.Returns(context);
@@ -45,45 +46,15 @@ public sealed class KernelTenantAccessorTests
         var result = tenantAccessor.GetCurrentTenantId();
 
         Assert.True(result.IsEmpty);
+        Assert.Equal(default, result);
     }
 
     [Fact]
-    public void GetCurrentTenantId_WhenTenantIdIsEmpty_ReturnsDefaultTenantId()
+    public void GetCurrentTenantId_WhenTenantIdIsNonInternal_ReturnsTenantIdBackedByKernelTenantId()
     {
+        var kernelTenantId = KernelTenantId.NewId();
         var context = Substitute.For<IOperationContext>();
-        context.TenantId.Returns(string.Empty);
-
-        var accessor = Substitute.For<IOperationContextAccessor>();
-        accessor.Current.Returns(context);
-
-        var tenantAccessor = new KernelTenantAccessor(accessor);
-
-        var result = tenantAccessor.GetCurrentTenantId();
-
-        Assert.True(result.IsEmpty);
-    }
-
-    [Fact]
-    public void GetCurrentTenantId_WhenTenantIdIsWhitespace_ReturnsDefaultTenantId()
-    {
-        var context = Substitute.For<IOperationContext>();
-        context.TenantId.Returns("   ");
-
-        var accessor = Substitute.For<IOperationContextAccessor>();
-        accessor.Current.Returns(context);
-
-        var tenantAccessor = new KernelTenantAccessor(accessor);
-
-        var result = tenantAccessor.GetCurrentTenantId();
-
-        Assert.True(result.IsEmpty);
-    }
-
-    [Fact]
-    public void GetCurrentTenantId_WhenTenantIdHasValue_ReturnsTenantId()
-    {
-        var context = Substitute.For<IOperationContext>();
-        context.TenantId.Returns("tenant-123");
+        context.TenantId.Returns(kernelTenantId);
 
         var accessor = Substitute.For<IOperationContextAccessor>();
         accessor.Current.Returns(context);
@@ -93,14 +64,16 @@ public sealed class KernelTenantAccessorTests
         var result = tenantAccessor.GetCurrentTenantId();
 
         Assert.False(result.IsEmpty);
-        Assert.Equal("tenant-123", result.Value);
+        Assert.Equal(kernelTenantId.ToString(), result.Value);
     }
 
     [Fact]
     public void GetCurrentTenantId_CalledMultipleTimes_ReturnsCurrentValue()
     {
+        var firstTenantId = KernelTenantId.NewId();
+        var secondTenantId = KernelTenantId.NewId();
         var context = Substitute.For<IOperationContext>();
-        context.TenantId.Returns("first-tenant", "second-tenant");
+        context.TenantId.Returns(firstTenantId, secondTenantId);
 
         var accessor = Substitute.For<IOperationContextAccessor>();
         accessor.Current.Returns(context);
@@ -110,7 +83,7 @@ public sealed class KernelTenantAccessorTests
         var first = tenantAccessor.GetCurrentTenantId();
         var second = tenantAccessor.GetCurrentTenantId();
 
-        Assert.Equal("first-tenant", first.Value);
-        Assert.Equal("second-tenant", second.Value);
+        Assert.Equal(firstTenantId.ToString(), first.Value);
+        Assert.Equal(secondTenantId.ToString(), second.Value);
     }
 }

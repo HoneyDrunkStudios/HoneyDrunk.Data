@@ -19,6 +19,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.5.0] - 2026-05-04
+
+### Changed
+
+- Adopted Kernel 0.5.0 typed tenant context values across Data's Kernel context adapters while preserving Data's public tenant abstractions.
+- Coordinated all project versions to `0.5.0` and Kernel package references to `0.5.0`.
+
 ## [0.4.0] - 2026-04-25
 
 ### Added
@@ -69,7 +76,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Migration infrastructure with `MigrationRunner`
 - Testing utilities in `HoneyDrunk.Data.Testing`
 
-[0.3.0]: https://github.com/HoneyDrunkStudios/HoneyDrunk.Data/releases/tag/v0.3.0
+[0.5.0]: https://github.com/HoneyDrunkStudios/HoneyDrunk.Data/releases/tag/v0.5.0
 [0.4.0]: https://github.com/HoneyDrunkStudios/HoneyDrunk.Data/releases/tag/v0.4.0
+[0.3.0]: https://github.com/HoneyDrunkStudios/HoneyDrunk.Data/releases/tag/v0.3.0
 [0.2.0]: https://github.com/HoneyDrunkStudios/HoneyDrunk.Data/releases/tag/v0.2.0
 [0.1.0]: https://github.com/HoneyDrunkStudios/HoneyDrunk.Data/releases/tag/v0.1.0
