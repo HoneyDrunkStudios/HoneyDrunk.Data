@@ -144,6 +144,29 @@ public sealed class EfOutboxWriterTests : IAsyncDisposable
     }
 
     [Fact]
+    public async Task WriteAsync_WhenExistingContextValuesAreWhitespace_EnrichesFromContext()
+    {
+        var accessor = Substitute.For<IOperationContextAccessor>();
+        var opContext = Substitute.For<IOperationContext>();
+        var tenantId = KernelTenantId.NewId();
+        opContext.CorrelationId.Returns("from-context");
+        opContext.TenantId.Returns(tenantId);
+        accessor.Current.Returns(opContext);
+
+        var writer = CreateWriter(_context, accessor);
+        var message = CreateMessage();
+        message.CorrelationId = "   ";
+        message.TenantId = "\t";
+
+        await writer.WriteAsync(message);
+        await _context.SaveChangesAsync();
+
+        var saved = _context.OutboxMessages.Single();
+        Assert.Equal("from-context", saved.CorrelationId);
+        Assert.Equal(tenantId.ToString(), saved.TenantId);
+    }
+
+    [Fact]
     public async Task WriteAsync_WhenAutoPopulateDisabled_DoesNotEnrich()
     {
         var accessor = Substitute.For<IOperationContextAccessor>();
@@ -165,18 +188,51 @@ public sealed class EfOutboxWriterTests : IAsyncDisposable
     }
 
     [Fact]
-    public async Task WriteAsync_WhenContextAccessorReturnsNull_DoesNotThrow()
+    public async Task WriteAsync_WhenContextAccessorReturnsNull_ThrowsInvalidOperationException()
     {
         var accessor = Substitute.For<IOperationContextAccessor>();
-        accessor.Current.Returns((IOperationContext)null!);
+        IOperationContext? current = null;
+        accessor.Current.Returns(current);
 
         var writer = CreateWriter(_context, accessor);
         var message = CreateMessage();
 
+        await Assert.ThrowsAsync<InvalidOperationException>(() => writer.WriteAsync(message));
+    }
+
+    [Fact]
+    public async Task WriteAsync_WhenContextAccessorReturnsNull_WithExplicitContext_Succeeds()
+    {
+        var accessor = Substitute.For<IOperationContextAccessor>();
+        IOperationContext? current = null;
+        accessor.Current.Returns(current);
+
+        var writer = CreateWriter(_context, accessor);
+        var message = CreateMessage();
+        message.CorrelationId = "explicit-correlation";
+        message.TenantId = KernelTenantId.Internal.ToString();
+
         await writer.WriteAsync(message);
         await _context.SaveChangesAsync();
 
-        Assert.Single(_context.OutboxMessages);
+        var saved = _context.OutboxMessages.Single();
+        Assert.Equal("explicit-correlation", saved.CorrelationId);
+        Assert.Equal(KernelTenantId.Internal.ToString(), saved.TenantId);
+    }
+
+    [Fact]
+    public async Task WriteAsync_WhenContextCorrelationIdMissing_ThrowsInvalidOperationException()
+    {
+        var accessor = Substitute.For<IOperationContextAccessor>();
+        var opContext = Substitute.For<IOperationContext>();
+        opContext.CorrelationId.Returns(string.Empty);
+        opContext.TenantId.Returns(KernelTenantId.Internal);
+        accessor.Current.Returns(opContext);
+
+        var writer = CreateWriter(_context, accessor);
+        var message = CreateMessage();
+
+        await Assert.ThrowsAsync<InvalidOperationException>(() => writer.WriteAsync(message));
     }
 
     [Fact]
@@ -223,9 +279,19 @@ public sealed class EfOutboxWriterTests : IAsyncDisposable
         IOperationContextAccessor? accessor = null,
         OutboxOptions? options = null)
     {
-        accessor ??= Substitute.For<IOperationContextAccessor>();
+        accessor ??= CreateAccessor();
         var opts = Options.Create(options ?? new OutboxOptions());
         return new EfOutboxWriter<OutboxTestDbContext>(context, accessor, opts);
+    }
+
+    private static IOperationContextAccessor CreateAccessor()
+    {
+        var accessor = Substitute.For<IOperationContextAccessor>();
+        var opContext = Substitute.For<IOperationContext>();
+        opContext.CorrelationId.Returns("corr-default");
+        opContext.TenantId.Returns(KernelTenantId.Internal);
+        accessor.Current.Returns(opContext);
+        return accessor;
     }
 
     private static OutboxMessage CreateMessage(string type = "TestEvent", string payload = "{}")

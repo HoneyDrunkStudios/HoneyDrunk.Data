@@ -8,10 +8,10 @@
 
     <!-- Package Metadata -->
     <PackageId>HoneyDrunk.Data.Outbox</PackageId>
-    <Version>0.5.1</Version>
+    <Version>0.6.0</Version>
     <Authors>HoneyDrunk Studios</Authors>
     <Description>EF Core persistence implementation for HoneyDrunk.Data transactional outbox. Provides entity configuration, writer, reader with lease-based concurrency, and System.Text.Json serialization. Does not reference any specific message bus.</Description>
-    <PackageReleaseNotes>v0.5.1: Correct package metadata for the Kernel 0.5.0 typed tenant adoption release train.</PackageReleaseNotes>
+    <PackageReleaseNotes>v0.6.0: Align with Kernel 0.7.0/Core release train, consolidate EF/SQL/SQLite helpers, and require valid outbox context enrichment.</PackageReleaseNotes>
     <PackageTags>data;outbox;transactional-outbox;entity-framework;ef-core;persistence;kernel;grid</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
@@ -25,7 +25,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="HoneyDrunk.Kernel.Abstractions" Version="0.5.0" />
+    <PackageReference Include="HoneyDrunk.Kernel.Abstractions" Version="0.7.0" />
     <PackageReference Include="HoneyDrunk.Standards" Version="0.2.7">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

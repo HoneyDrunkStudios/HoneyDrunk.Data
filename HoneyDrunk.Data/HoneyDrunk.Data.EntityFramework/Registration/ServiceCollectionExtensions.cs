@@ -38,53 +38,11 @@ public static class ServiceCollectionExtensions
 
         // Register DbContext with pooling for better performance
         services.AddDbContextFactory<TContext>((sp, options) =>
-        {
-            configureDbContext(sp, options);
-
-            if (efOptions.EnableSensitiveDataLogging)
-            {
-                options.EnableSensitiveDataLogging();
-            }
-
-            if (efOptions.EnableDetailedErrors)
-            {
-                options.EnableDetailedErrors();
-            }
-
-            if (efOptions.EnableCorrelationInterceptor)
-            {
-                var diagnosticsContext = sp.GetService<IDataDiagnosticsContext>();
-                if (diagnosticsContext is not null)
-                {
-                    options.AddInterceptors(new CorrelationCommandInterceptor(diagnosticsContext));
-                }
-            }
-        });
+            ConfigureDbContext(sp, options, configureDbContext, efOptions));
 
         // Also register DbContext for scoped injection (uses factory internally)
         services.AddDbContext<TContext>((sp, options) =>
-        {
-            configureDbContext(sp, options);
-
-            if (efOptions.EnableSensitiveDataLogging)
-            {
-                options.EnableSensitiveDataLogging();
-            }
-
-            if (efOptions.EnableDetailedErrors)
-            {
-                options.EnableDetailedErrors();
-            }
-
-            if (efOptions.EnableCorrelationInterceptor)
-            {
-                var diagnosticsContext = sp.GetService<IDataDiagnosticsContext>();
-                if (diagnosticsContext is not null)
-                {
-                    options.AddInterceptors(new CorrelationCommandInterceptor(diagnosticsContext));
-                }
-            }
-        });
+            ConfigureDbContext(sp, options, configureDbContext, efOptions));
 
         // Register unit of work (scoped - uses scoped DbContext)
         services.TryAddScoped<IUnitOfWork<TContext>, EfUnitOfWork<TContext>>();
@@ -121,5 +79,40 @@ public static class ServiceCollectionExtensions
         return services.AddHoneyDrunkDataEntityFramework<TContext>(
             (_, options) => configureDbContext(options),
             configureEfOptions);
+    }
+
+    private static void ConfigureDbContext(
+        IServiceProvider serviceProvider,
+        DbContextOptionsBuilder options,
+        Action<IServiceProvider, DbContextOptionsBuilder> configureDbContext,
+        EfDataOptions efOptions)
+    {
+        configureDbContext(serviceProvider, options);
+        ApplyEfOptions(serviceProvider, options, efOptions);
+    }
+
+    private static void ApplyEfOptions(
+        IServiceProvider serviceProvider,
+        DbContextOptionsBuilder options,
+        EfDataOptions efOptions)
+    {
+        if (efOptions.EnableSensitiveDataLogging)
+        {
+            options.EnableSensitiveDataLogging();
+        }
+
+        if (efOptions.EnableDetailedErrors)
+        {
+            options.EnableDetailedErrors();
+        }
+
+        if (efOptions.EnableCorrelationInterceptor)
+        {
+            var diagnosticsContext = serviceProvider.GetService<IDataDiagnosticsContext>();
+            if (diagnosticsContext is not null)
+            {
+                options.AddInterceptors(new CorrelationCommandInterceptor(diagnosticsContext));
+            }
+        }
     }
 }

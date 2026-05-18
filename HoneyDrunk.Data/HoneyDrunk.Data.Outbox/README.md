@@ -48,6 +48,10 @@ services
 dotnet ef migrations add AddOutbox --context AppDbContext
 ```
 
+## Context Enrichment
+
+When `OutboxOptions.AutoPopulateFromContext` is enabled, `EfOutboxWriter<TContext>` requires a current Kernel `IOperationContext` and writes both `CorrelationId` and `TenantId` onto each message. If no operation context is available, callers must provide explicit non-empty `CorrelationId` and `TenantId` values on the message; otherwise the writer fails fast instead of persisting partial Grid context.
+
 ## Concurrency Strategy
 
 `ClaimBatchAsync` uses an atomic per-message `ExecuteUpdateAsync` with

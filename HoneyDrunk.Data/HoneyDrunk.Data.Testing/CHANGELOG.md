@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## [0.6.0] - 2026-05-18
+
+### Changed
+
+- Centralized SQLite test database lifecycle management with explicit in-memory keepalive and file-backed modes.
+- Package version metadata bumped to `0.6.0` for the coordinated Data solution release train.
+
 ## [0.5.1] - 2026-05-04
 
 ### Fixed

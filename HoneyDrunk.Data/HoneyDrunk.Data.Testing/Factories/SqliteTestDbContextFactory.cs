@@ -1,7 +1,7 @@
 // Copyright (c) HoneyDrunk Studios. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-using Microsoft.Data.Sqlite;
+using HoneyDrunk.Data.Testing.Fixtures;
 using Microsoft.EntityFrameworkCore;
 
 namespace HoneyDrunk.Data.Testing.Factories;
@@ -14,7 +14,7 @@ public sealed class SqliteTestDbContextFactory<TContext> : IAsyncDisposable
     where TContext : DbContext
 {
     private readonly Func<DbContextOptions<TContext>, TContext> _contextFactory;
-    private SqliteConnection? _connection;
+    private SqliteTestDatabase<TContext>? _database;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="SqliteTestDbContextFactory{TContext}"/> class.
@@ -33,17 +33,9 @@ public sealed class SqliteTestDbContextFactory<TContext> : IAsyncDisposable
     /// <returns>A configured DbContext instance.</returns>
     public TContext Create()
     {
-        _connection = new SqliteConnection("DataSource=:memory:");
-        _connection.Open();
-
-        var options = new DbContextOptionsBuilder<TContext>()
-            .UseSqlite(_connection)
-            .Options;
-
-        var context = _contextFactory(options);
-        context.Database.EnsureCreated();
-
-        return context;
+        var database = SqliteTestDatabaseFactory.CreateInMemory(_contextFactory);
+        ReplaceDatabase(database);
+        return database.CreateContext();
     }
 
     /// <summary>
@@ -55,27 +47,24 @@ public sealed class SqliteTestDbContextFactory<TContext> : IAsyncDisposable
     {
         ArgumentNullException.ThrowIfNull(configureOptions);
 
-        _connection = new SqliteConnection("DataSource=:memory:");
-        _connection.Open();
-
-        var optionsBuilder = new DbContextOptionsBuilder<TContext>()
-            .UseSqlite(_connection);
-
-        configureOptions(optionsBuilder);
-
-        var context = _contextFactory(optionsBuilder.Options);
-        context.Database.EnsureCreated();
-
-        return context;
+        var database = SqliteTestDatabaseFactory.CreateInMemory(_contextFactory, configureOptions);
+        ReplaceDatabase(database);
+        return database.CreateContext();
     }
 
     /// <inheritdoc />
     public async ValueTask DisposeAsync()
     {
-        if (_connection is not null)
+        if (_database is not null)
         {
-            await _connection.DisposeAsync().ConfigureAwait(false);
-            _connection = null;
+            await _database.DisposeAsync().ConfigureAwait(false);
+            _database = null;
         }
+    }
+
+    private void ReplaceDatabase(SqliteTestDatabase<TContext> database)
+    {
+        _database?.Dispose();
+        _database = database;
     }
 }

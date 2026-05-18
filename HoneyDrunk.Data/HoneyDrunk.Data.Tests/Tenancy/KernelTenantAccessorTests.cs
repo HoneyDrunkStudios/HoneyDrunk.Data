@@ -22,7 +22,8 @@ public sealed class KernelTenantAccessorTests
     public void GetCurrentTenantId_WhenContextIsNull_ReturnsDefaultTenantId()
     {
         var accessor = Substitute.For<IOperationContextAccessor>();
-        accessor.Current.Returns((IOperationContext)null!);
+        IOperationContext? current = null;
+        accessor.Current.Returns(current);
 
         var tenantAccessor = new KernelTenantAccessor(accessor);
 
