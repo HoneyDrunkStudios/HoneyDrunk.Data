@@ -82,10 +82,16 @@ public sealed class EfOutboxWriter<TContext>(
                 "Outbox context autopopulation requires a current operation context with a non-empty correlation id.");
         }
 
-        message.CorrelationId ??= correlationId;
+        if (string.IsNullOrWhiteSpace(message.CorrelationId))
+        {
+            message.CorrelationId = correlationId;
+        }
 
         KernelTenantId tenantId = context.TenantId;
-        message.TenantId ??= tenantId.ToString();
+        if (string.IsNullOrWhiteSpace(message.TenantId))
+        {
+            message.TenantId = tenantId.ToString();
+        }
 
         ValidateExplicitContext(message);
     }

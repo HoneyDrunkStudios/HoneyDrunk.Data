@@ -14,12 +14,12 @@ public sealed class CanarySqliteFixture : IAsyncLifetime, IDisposable
     public string ConnectionString => _database?.ConnectionString
         ?? throw new InvalidOperationException("The SQLite canary fixture has not been initialized.");
 
-    public async Task InitializeAsync()
+    public Task InitializeAsync()
     {
         _database = SqliteTestDatabaseFactory.CreateFileBacked<CanaryDbContext>(
             options => new CanaryDbContext(options));
 
-        await Task.CompletedTask;
+        return Task.CompletedTask;
     }
 
     public CanaryDbContext CreateContext()

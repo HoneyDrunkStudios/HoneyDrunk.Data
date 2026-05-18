@@ -144,6 +144,29 @@ public sealed class EfOutboxWriterTests : IAsyncDisposable
     }
 
     [Fact]
+    public async Task WriteAsync_WhenExistingContextValuesAreWhitespace_EnrichesFromContext()
+    {
+        var accessor = Substitute.For<IOperationContextAccessor>();
+        var opContext = Substitute.For<IOperationContext>();
+        var tenantId = KernelTenantId.NewId();
+        opContext.CorrelationId.Returns("from-context");
+        opContext.TenantId.Returns(tenantId);
+        accessor.Current.Returns(opContext);
+
+        var writer = CreateWriter(_context, accessor);
+        var message = CreateMessage();
+        message.CorrelationId = "   ";
+        message.TenantId = "\t";
+
+        await writer.WriteAsync(message);
+        await _context.SaveChangesAsync();
+
+        var saved = _context.OutboxMessages.Single();
+        Assert.Equal("from-context", saved.CorrelationId);
+        Assert.Equal(tenantId.ToString(), saved.TenantId);
+    }
+
+    [Fact]
     public async Task WriteAsync_WhenAutoPopulateDisabled_DoesNotEnrich()
     {
         var accessor = Substitute.For<IOperationContextAccessor>();
