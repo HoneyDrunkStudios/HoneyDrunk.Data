@@ -168,7 +168,8 @@ public sealed class EfOutboxWriterTests : IAsyncDisposable
     public async Task WriteAsync_WhenContextAccessorReturnsNull_ThrowsInvalidOperationException()
     {
         var accessor = Substitute.For<IOperationContextAccessor>();
-        accessor.Current.Returns((IOperationContext)null!);
+        IOperationContext? current = null;
+        accessor.Current.Returns(current);
 
         var writer = CreateWriter(_context, accessor);
         var message = CreateMessage();
@@ -180,7 +181,8 @@ public sealed class EfOutboxWriterTests : IAsyncDisposable
     public async Task WriteAsync_WhenContextAccessorReturnsNull_WithExplicitContext_Succeeds()
     {
         var accessor = Substitute.For<IOperationContextAccessor>();
-        accessor.Current.Returns((IOperationContext)null!);
+        IOperationContext? current = null;
+        accessor.Current.Returns(current);
 
         var writer = CreateWriter(_context, accessor);
         var message = CreateMessage();
