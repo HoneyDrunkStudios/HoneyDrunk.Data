@@ -1,5 +1,11 @@
 # Changelog — HoneyDrunk.Data.Outbox
 
+## 0.6.0
+
+- `EfOutboxWriter<TContext>` now requires a current Kernel operation context when context autopopulation is enabled, unless callers provide explicit correlation and tenant ids.
+- Internal tenant context is now persisted explicitly on outbox messages instead of being omitted.
+- Package version bumped to `0.6.0` and Kernel abstractions reference aligned to `0.7.0`.
+
 ## 0.5.1
 
 - Corrected NuGet package release metadata for the 0.5.x release train.

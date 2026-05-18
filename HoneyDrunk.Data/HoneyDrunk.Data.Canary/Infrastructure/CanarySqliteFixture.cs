@@ -1,5 +1,4 @@
-using Microsoft.Data.Sqlite;
-using Microsoft.EntityFrameworkCore;
+using HoneyDrunk.Data.Testing.Fixtures;
 
 namespace HoneyDrunk.Data.Canary.Infrastructure;
 
@@ -9,34 +8,24 @@ namespace HoneyDrunk.Data.Canary.Infrastructure;
 /// </summary>
 public sealed class CanarySqliteFixture : IAsyncLifetime, IDisposable
 {
-    private SqliteConnection? _keepAliveConnection;
-    private string _dbPath = null!;
+    private SqliteTestDatabase<CanaryDbContext>? _database;
     private bool _disposed;
 
-    public string ConnectionString { get; private set; } = null!;
+    public string ConnectionString => _database?.ConnectionString
+        ?? throw new InvalidOperationException("The SQLite canary fixture has not been initialized.");
 
     public async Task InitializeAsync()
     {
-        var tempDirectory = Path.GetTempPath();
-        var databaseFileName = $"canary_{Guid.NewGuid():N}.db";
-        _dbPath = Path.GetFullPath(databaseFileName, tempDirectory);
-        ConnectionString = $"DataSource={_dbPath}";
+        _database = SqliteTestDatabaseFactory.CreateFileBacked<CanaryDbContext>(
+            options => new CanaryDbContext(options));
 
-        // Keep one connection open to prevent SQLite from deleting the file
-        _keepAliveConnection = new SqliteConnection(ConnectionString);
-        await _keepAliveConnection.OpenAsync();
-
-        await using var context = CreateContext();
-        await context.Database.EnsureCreatedAsync();
+        await Task.CompletedTask;
     }
 
     public CanaryDbContext CreateContext()
     {
-        var options = new DbContextOptionsBuilder<CanaryDbContext>()
-            .UseSqlite(ConnectionString)
-            .Options;
-
-        return new CanaryDbContext(options);
+        return _database?.CreateContext()
+            ?? throw new InvalidOperationException("The SQLite canary fixture has not been initialized.");
     }
 
     public async Task DisposeAsync()
@@ -46,13 +35,12 @@ public sealed class CanarySqliteFixture : IAsyncLifetime, IDisposable
             return;
         }
 
-        if (_keepAliveConnection is not null)
+        if (_database is not null)
         {
-            await _keepAliveConnection.DisposeAsync();
-            _keepAliveConnection = null;
+            await _database.DisposeAsync();
+            _database = null;
         }
 
-        TryDeleteDatabase();
         _disposed = true;
     }
 
@@ -63,23 +51,8 @@ public sealed class CanarySqliteFixture : IAsyncLifetime, IDisposable
             return;
         }
 
-        _keepAliveConnection?.Dispose();
-        _keepAliveConnection = null;
-
-        TryDeleteDatabase();
+        _database?.Dispose();
+        _database = null;
         _disposed = true;
-    }
-
-    private void TryDeleteDatabase()
-    {
-        try
-        {
-            if (File.Exists(_dbPath))
-                File.Delete(_dbPath);
-        }
-        catch (IOException)
-        {
-            // Best-effort cleanup in CI
-        }
     }
 }

@@ -5,6 +5,7 @@ using HoneyDrunk.Data.EntityFramework.Registration;
 using HoneyDrunk.Vault.Abstractions;
 using HoneyDrunk.Vault.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace HoneyDrunk.Data.SqlServer.Registration;
@@ -99,22 +100,7 @@ public static class ServiceCollectionExtensions
         SqlServerDataOptions sqlOptions)
     {
         var connectionString = ResolveConnectionString(serviceProvider, sqlOptions, "SQL Server");
-
-        options.UseSqlServer(connectionString, sqlServerOptions =>
-        {
-            if (sqlOptions.EnableRetryOnFailure)
-            {
-                sqlServerOptions.EnableRetryOnFailure(
-                    maxRetryCount: sqlOptions.MaxRetryCount,
-                    maxRetryDelay: TimeSpan.FromSeconds(sqlOptions.MaxRetryDelaySeconds),
-                    errorNumbersToAdd: null);
-            }
-
-            if (sqlOptions.CommandTimeoutSeconds.HasValue)
-            {
-                sqlServerOptions.CommandTimeout(sqlOptions.CommandTimeoutSeconds.Value);
-            }
-        });
+        options.UseSqlServer(connectionString, providerOptions => ConfigureProviderOptions(providerOptions, sqlOptions));
     }
 
     private static void ConfigureAzureSql(
@@ -123,22 +109,43 @@ public static class ServiceCollectionExtensions
         SqlServerDataOptions sqlOptions)
     {
         var connectionString = ResolveConnectionString(serviceProvider, sqlOptions, "Azure SQL");
+        options.UseAzureSql(connectionString, providerOptions => ConfigureProviderOptions(providerOptions, sqlOptions));
+    }
 
-        options.UseAzureSql(connectionString, azureSqlOptions =>
+    private static void ConfigureProviderOptions(
+        SqlServerDbContextOptionsBuilder providerOptions,
+        SqlServerDataOptions sqlOptions)
+    {
+        if (sqlOptions.EnableRetryOnFailure)
         {
-            if (sqlOptions.EnableRetryOnFailure)
-            {
-                azureSqlOptions.EnableRetryOnFailure(
-                    maxRetryCount: sqlOptions.MaxRetryCount,
-                    maxRetryDelay: TimeSpan.FromSeconds(sqlOptions.MaxRetryDelaySeconds),
-                    errorNumbersToAdd: null);
-            }
+            providerOptions.EnableRetryOnFailure(
+                maxRetryCount: sqlOptions.MaxRetryCount,
+                maxRetryDelay: TimeSpan.FromSeconds(sqlOptions.MaxRetryDelaySeconds),
+                errorNumbersToAdd: null);
+        }
 
-            if (sqlOptions.CommandTimeoutSeconds.HasValue)
-            {
-                azureSqlOptions.CommandTimeout(sqlOptions.CommandTimeoutSeconds.Value);
-            }
-        });
+        if (sqlOptions.CommandTimeoutSeconds.HasValue)
+        {
+            providerOptions.CommandTimeout(sqlOptions.CommandTimeoutSeconds.Value);
+        }
+    }
+
+    private static void ConfigureProviderOptions(
+        AzureSqlDbContextOptionsBuilder providerOptions,
+        SqlServerDataOptions sqlOptions)
+    {
+        if (sqlOptions.EnableRetryOnFailure)
+        {
+            providerOptions.EnableRetryOnFailure(
+                maxRetryCount: sqlOptions.MaxRetryCount,
+                maxRetryDelay: TimeSpan.FromSeconds(sqlOptions.MaxRetryDelaySeconds),
+                errorNumbersToAdd: null);
+        }
+
+        if (sqlOptions.CommandTimeoutSeconds.HasValue)
+        {
+            providerOptions.CommandTimeout(sqlOptions.CommandTimeoutSeconds.Value);
+        }
     }
 
     private static string ResolveConnectionString(

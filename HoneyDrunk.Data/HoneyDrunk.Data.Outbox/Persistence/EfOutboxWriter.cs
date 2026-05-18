@@ -54,6 +54,15 @@ public sealed class EfOutboxWriter<TContext>(
         return Task.CompletedTask;
     }
 
+    private static void ValidateExplicitContext(OutboxMessage message)
+    {
+        if (string.IsNullOrWhiteSpace(message.CorrelationId) || string.IsNullOrWhiteSpace(message.TenantId))
+        {
+            throw new InvalidOperationException(
+                "Outbox context autopopulation requires a current operation context or explicit correlation and tenant ids.");
+        }
+    }
+
     private void EnrichFromContext(OutboxMessage message)
     {
         if (!_options.AutoPopulateFromContext)
@@ -61,15 +70,24 @@ public sealed class EfOutboxWriter<TContext>(
 
         var context = _operationContextAccessor.Current;
         if (context is null)
+        {
+            ValidateExplicitContext(message);
             return;
+        }
 
-        message.CorrelationId ??= context.CorrelationId.ToString();
+        var correlationId = context.CorrelationId;
+        if (string.IsNullOrWhiteSpace(correlationId))
+        {
+            throw new InvalidOperationException(
+                "Outbox context autopopulation requires a current operation context with a non-empty correlation id.");
+        }
+
+        message.CorrelationId ??= correlationId;
 
         KernelTenantId tenantId = context.TenantId;
-        if (!tenantId.IsInternal)
-        {
-            message.TenantId ??= tenantId.ToString();
-        }
+        message.TenantId ??= tenantId.ToString();
+
+        ValidateExplicitContext(message);
     }
 
     private void ValidatePayloadSize(OutboxMessage message)

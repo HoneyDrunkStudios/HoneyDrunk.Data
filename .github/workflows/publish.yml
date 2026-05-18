@@ -91,6 +91,9 @@ jobs:
             HoneyDrunk.Data.EntityFramework
             HoneyDrunk.Data.SqlServer
             HoneyDrunk.Data.Migrations
+            HoneyDrunk.Data.Outbox
+            HoneyDrunk.Data.Outbox.Abstractions
+            HoneyDrunk.Data.Outbox.Dispatcher
           docs-url: 'https://github.com/HoneyDrunkStudios/HoneyDrunk.Data#readme'
 
       - name: Create GitHub Release

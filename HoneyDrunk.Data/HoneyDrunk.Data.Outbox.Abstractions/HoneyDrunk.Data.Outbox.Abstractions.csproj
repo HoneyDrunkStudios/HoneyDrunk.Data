@@ -9,7 +9,7 @@
 
     <!-- Package Metadata -->
     <PackageId>HoneyDrunk.Data.Outbox.Abstractions</PackageId>
-    <Version>0.5.1</Version>
+    <Version>0.6.0</Version>
     <Authors>HoneyDrunk Studios</Authors>
     <Description>Pure outbox contracts for HoneyDrunk.Data. Defines IOutboxWriter, IOutboxReader, IOutboxDispatcher, and the OutboxMessage model with lease-based concurrency. No EF Core, SQL, or Transport dependencies.</Description>
     <PackageReleaseNotes>v0.5.1: Correct package metadata for the Kernel 0.5.0 typed tenant adoption release train.</PackageReleaseNotes>

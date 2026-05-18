@@ -1,5 +1,9 @@
 # Changelog — HoneyDrunk.Data.Outbox.Dispatcher
 
+## 0.6.0
+
+- Package version bumped to `0.6.0` and Transport reference aligned to `0.6.0`.
+
 ## 0.5.1
 
 - Corrected NuGet package release metadata for the 0.5.x release train.

@@ -19,6 +19,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.6.0] - 2026-05-18
+
+### Changed
+
+- Aligned Data package versions to `0.6.0`, Kernel dependencies to `0.7.0`, Transport dependency to `0.6.0`, and Vault dependencies to `0.5.0`.
+- Consolidated duplicated EF registration, SQL provider option, and SQLite test database lifecycle helpers.
+- Release notes now include the Outbox package family.
+
+### Fixed
+
+- Outbox context autopopulation now fails fast when operation context is missing or incomplete unless explicit correlation and tenant ids are provided.
+
 ## [0.5.1] - 2026-05-04
 
 ### Fixed

@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## [0.6.0] - 2026-05-18
+
+### Changed
+
+- Consolidated SQL Server and Azure SQL retry/timeout provider configuration while preserving provider-specific registration calls.
+- Package version bumped to `0.6.0` and Vault reference aligned to `0.5.0`.
+
 ## [0.5.1] - 2026-05-04
 
 ### Fixed

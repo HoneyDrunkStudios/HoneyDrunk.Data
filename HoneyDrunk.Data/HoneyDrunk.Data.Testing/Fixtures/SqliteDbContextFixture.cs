@@ -1,7 +1,6 @@
 // Copyright (c) HoneyDrunk Studios. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 
 namespace HoneyDrunk.Data.Testing.Fixtures;
@@ -14,7 +13,7 @@ namespace HoneyDrunk.Data.Testing.Fixtures;
 public abstract class SqliteDbContextFixture<TContext> : IAsyncLifetime, IDisposable
     where TContext : DbContext
 {
-    private SqliteConnection? _connection;
+    private SqliteTestDatabase<TContext>? _database;
     private bool _disposed;
 
     /// <summary>
@@ -25,16 +24,8 @@ public abstract class SqliteDbContextFixture<TContext> : IAsyncLifetime, IDispos
     /// <inheritdoc />
     public async Task InitializeAsync()
     {
-        _connection = new SqliteConnection("DataSource=:memory:");
-        await _connection.OpenAsync().ConfigureAwait(false);
-
-        var optionsBuilder = new DbContextOptionsBuilder<TContext>()
-            .UseSqlite(_connection);
-
-        ConfigureOptions(optionsBuilder);
-
-        Context = CreateContext(optionsBuilder.Options);
-        await Context.Database.EnsureCreatedAsync().ConfigureAwait(false);
+        _database = SqliteTestDatabaseFactory.CreateInMemory<TContext>(CreateContext, ConfigureOptions);
+        Context = _database.CreateContext();
         await SeedAsync(Context).ConfigureAwait(false);
     }
 
@@ -51,10 +42,10 @@ public abstract class SqliteDbContextFixture<TContext> : IAsyncLifetime, IDispos
             await Context.DisposeAsync().ConfigureAwait(false);
         }
 
-        if (_connection is not null)
+        if (_database is not null)
         {
-            await _connection.DisposeAsync().ConfigureAwait(false);
-            _connection = null;
+            await _database.DisposeAsync().ConfigureAwait(false);
+            _database = null;
         }
 
         _disposed = true;
@@ -110,8 +101,8 @@ public abstract class SqliteDbContextFixture<TContext> : IAsyncLifetime, IDispos
         if (disposing)
         {
             Context?.Dispose();
-            _connection?.Dispose();
-            _connection = null;
+            _database?.Dispose();
+            _database = null;
         }
 
         _disposed = true;
