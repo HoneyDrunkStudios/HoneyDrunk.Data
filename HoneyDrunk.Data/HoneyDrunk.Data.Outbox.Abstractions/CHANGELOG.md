@@ -1,4 +1,10 @@
-# Changelog — HoneyDrunk.Data.Outbox.Abstractions
+# Changelog - HoneyDrunk.Data.Outbox.Abstractions
+
+## [Unreleased]
+
+### Changed
+
+- Refreshed HoneyDrunk.Standards to 0.2.9 for ADR-0047 testing tooling alignment.
 
 ## 0.6.0
 
@@ -30,10 +36,10 @@
 ## 0.1.0
 
 - Initial release.
-- `IOutboxWriter` — write outbox messages within a transaction.
-- `IOutboxReader` — load pending messages and manage dispatch lifecycle.
-- `IOutboxDispatcher` — dispatch trigger interface.
-- `OutboxMessage` — message model.
-- `OutboxMessageStatus` — lifecycle enum.
-- `OutboxOptions` — configuration.
-- `OutboxHeaderNames` — well-known header constants.
+- `IOutboxWriter` - write outbox messages within a transaction.
+- `IOutboxReader` - load pending messages and manage dispatch lifecycle.
+- `IOutboxDispatcher` - dispatch trigger interface.
+- `OutboxMessage` - message model.
+- `OutboxMessageStatus` - lifecycle enum.
+- `OutboxOptions` - configuration.
+- `OutboxHeaderNames` - well-known header constants.

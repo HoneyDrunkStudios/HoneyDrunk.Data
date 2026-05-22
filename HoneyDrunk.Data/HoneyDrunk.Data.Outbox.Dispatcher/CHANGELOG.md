@@ -1,4 +1,10 @@
-# Changelog — HoneyDrunk.Data.Outbox.Dispatcher
+# Changelog - HoneyDrunk.Data.Outbox.Dispatcher
+
+## [Unreleased]
+
+### Changed
+
+- Refreshed HoneyDrunk.Standards to 0.2.9 for ADR-0047 testing tooling alignment.
 
 ## 0.6.0
 
@@ -19,7 +25,7 @@
 ## 0.2.0
 
 - **Breaking:** Dispatch uses lease-based claiming instead of status-only.
-- `OutboxDispatcherOptions.LeaseDuration` — configurable lease duration (default: 5 minutes).
+- `OutboxDispatcherOptions.LeaseDuration` - configurable lease duration (default: 5 minutes).
 - Failure handling: `ReleaseForRetryAsync` with exponential backoff when retries remain, `DeadLetterAsync` when exhausted.
 - `MessagePoisoned` log renamed to `MessageDeadLettered`.
 - Source-generated logging via `Log.cs`.
@@ -28,7 +34,7 @@
 ## 0.1.0
 
 - Initial release.
-- `OutboxDispatcherService` — `BackgroundService` polling loop with exponential backoff.
-- `OutboxDispatcherOptions` — batch size, poll interval, retry policy, default destination.
-- `AddOutboxDispatcher()` — DI registration extension.
+- `OutboxDispatcherService` - `BackgroundService` polling loop with exponential backoff.
+- `OutboxDispatcherOptions` - batch size, poll interval, retry policy, default destination.
+- `AddOutboxDispatcher()` - DI registration extension.
 - Publishes via `ITransportPublisher` using `TransportEnvelope` + `EndpointAddress`.
