@@ -1,4 +1,10 @@
-# Changelog — HoneyDrunk.Data.Outbox
+# Changelog - HoneyDrunk.Data.Outbox
+
+## [Unreleased]
+
+### Changed
+
+- Refreshed HoneyDrunk.Standards to 0.2.9 for ADR-0047 testing tooling alignment.
 
 ## 0.6.0
 
@@ -31,9 +37,9 @@
 ## 0.1.0
 
 - Initial release.
-- `EfOutboxWriter<TContext>` — adds outbox messages to EF change tracker.
-- `EfOutboxReader<TContext>` — batch retrieval with compare-and-swap concurrency.
-- `OutboxMessageConfiguration` — EF entity type configuration with indexes.
-- `ModelBuilderExtensions.ApplyOutboxConfiguration()` — model builder integration.
-- `OutboxHeaderSerializer` — System.Text.Json header serialization.
-- `AddHoneyDrunkDataOutbox<TContext>()` — DI registration extension.
+- `EfOutboxWriter<TContext>` - adds outbox messages to EF change tracker.
+- `EfOutboxReader<TContext>` - batch retrieval with compare-and-swap concurrency.
+- `OutboxMessageConfiguration` - EF entity type configuration with indexes.
+- `ModelBuilderExtensions.ApplyOutboxConfiguration()` - model builder integration.
+- `OutboxHeaderSerializer` - System.Text.Json header serialization.
+- `AddHoneyDrunkDataOutbox<TContext>()` - DI registration extension.
