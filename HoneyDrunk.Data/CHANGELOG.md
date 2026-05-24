@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Internal
 
+- Enabled ADR-0044 OpenClaw/Codex Grid Review Runner request generation for repository PRs.
 - Adopted HoneyDrunk.Standards.Tests 0.2.9 for Data test/canary/testing projects and refreshed HoneyDrunk.Standards to 0.2.9 for ADR-0047 testing alignment.
 - Backfilled Data outbox registration test coverage above the Grid PR coverage gate floor.
 - Seeded the Data coverage baseline and wired the push-to-main coverage baseline ratchet.
@@ -31,8 +32,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-
-- Enabled ADR-0044 OpenClaw/Codex Grid Review Runner request generation for repository PRs.
 - Aligned Data package versions to `0.6.0`, Kernel dependencies to `0.7.0`, Transport dependency to `0.6.0`, and Vault dependencies to `0.5.0`.
 - Consolidated duplicated EF registration, SQL provider option, and SQLite test database lifecycle helpers.
 - Release notes now include the Outbox package family.
@@ -51,8 +50,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-
-- Enabled ADR-0044 OpenClaw/Codex Grid Review Runner request generation for repository PRs.
 - Adopted Kernel 0.5.0 typed tenant context values across Data's Kernel context adapters while preserving Data's public tenant abstractions.
 - Coordinated all project versions to `0.5.0` and Kernel package references to `0.5.0`.
 
@@ -67,8 +64,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-
-- Enabled ADR-0044 OpenClaw/Codex Grid Review Runner request generation for repository PRs.
 - SQL Server registration now resolves connection strings through `ISecretStore` per DbContext resolution instead of accepting raw connection strings.
 - Migration design-time factories now bootstrap Vault from `AZURE_KEYVAULT_URI` and resolve `Sql--MigrationConnection` through `ISecretStore`.
 
@@ -82,8 +77,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-
-- Enabled ADR-0044 OpenClaw/Codex Grid Review Runner request generation for repository PRs.
 - Complete restructure of the orchestration layer for improved Kernel integration
 - Enhanced `KernelTenantAccessor` with better null handling
 - Improved `KernelDataDiagnosticsContext` with additional telemetry tags

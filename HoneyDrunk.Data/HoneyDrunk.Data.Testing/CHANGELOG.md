@@ -5,13 +5,10 @@ All notable changes to HoneyDrunk.Data.Testing will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-
 ## [Unreleased]
 
 ### Changed
 
-
-- Enabled ADR-0044 OpenClaw/Codex Grid Review Runner request generation for repository PRs.
 - Refreshed HoneyDrunk.Standards to 0.2.9 for ADR-0047 testing tooling alignment.
 - Marked the helper assembly as non-test-discoverable while retaining test helper dependencies, so coverage gates do not count fixture-only code as an empty test assembly.
 
@@ -19,8 +16,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-
-- Enabled ADR-0044 OpenClaw/Codex Grid Review Runner request generation for repository PRs.
 - Centralized SQLite test database lifecycle management with explicit in-memory keepalive and file-backed modes.
 - Package version metadata bumped to `0.6.0` for the coordinated Data solution release train.
 
@@ -40,8 +35,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-
-- Enabled ADR-0044 OpenClaw/Codex Grid Review Runner request generation for repository PRs.
 - **Architecture Overhaul**: Complete restructure of testing infrastructure
 - Enhanced `SqliteTestDbContextFactory` with improved connection management
 - Improved `SqliteDbContextFixture` with better lifecycle handling

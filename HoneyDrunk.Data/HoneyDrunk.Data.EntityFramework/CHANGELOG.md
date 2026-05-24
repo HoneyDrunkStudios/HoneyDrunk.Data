@@ -5,21 +5,16 @@ All notable changes to HoneyDrunk.Data.EntityFramework will be documented in thi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-
 ## [Unreleased]
 
 ### Changed
 
-
-- Enabled ADR-0044 OpenClaw/Codex Grid Review Runner request generation for repository PRs.
 - Refreshed HoneyDrunk.Standards to 0.2.9 for ADR-0047 testing tooling alignment.
 
 ## [0.6.0] - 2026-05-18
 
 ### Changed
 
-
-- Enabled ADR-0044 OpenClaw/Codex Grid Review Runner request generation for repository PRs.
 - Consolidated EF DbContext option application so factory and scoped registrations share one configuration path.
 - Package version bumped to `0.6.0`.
 
@@ -33,8 +28,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-
-- Enabled ADR-0044 OpenClaw/Codex Grid Review Runner request generation for repository PRs.
 - Coordinated package train bump for the ADR-0005/0006 Data rollout.
 
 ## [0.3.0] - 2026-02-15
@@ -47,8 +40,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-
-- Enabled ADR-0044 OpenClaw/Codex Grid Review Runner request generation for repository PRs.
 - **Architecture Overhaul**: Complete restructure of EF Core provider implementation
 - Enhanced `HoneyDrunkDbContext` with improved tenant and correlation access
 - Improved `EfRepository` with better async patterns

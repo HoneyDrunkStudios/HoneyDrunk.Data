@@ -5,21 +5,16 @@ All notable changes to HoneyDrunk.Data.SqlServer will be documented in this file
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-
 ## [Unreleased]
 
 ### Changed
 
-
-- Enabled ADR-0044 OpenClaw/Codex Grid Review Runner request generation for repository PRs.
 - Refreshed HoneyDrunk.Standards to 0.2.9 for ADR-0047 testing tooling alignment.
 
 ## [0.6.0] - 2026-05-18
 
 ### Changed
 
-
-- Enabled ADR-0044 OpenClaw/Codex Grid Review Runner request generation for repository PRs.
 - Consolidated SQL Server and Azure SQL retry/timeout provider configuration while preserving provider-specific registration calls.
 - Package version bumped to `0.6.0` and Vault reference aligned to `0.5.0`.
 
@@ -33,8 +28,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-
-- Enabled ADR-0044 OpenClaw/Codex Grid Review Runner request generation for repository PRs.
 - SQL Server and Azure SQL registration now resolve connection strings through `ISecretStore` using unversioned `SecretIdentifier` values.
 - `SqlServerDataOptions` now configures `ConnectionSecretName`, with `UseConnectionPurpose()` applying `Sql--{Purpose}Connection`.
 - SQL health failures no longer include provider exception messages that could contain sensitive context.
@@ -50,8 +43,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-
-- Enabled ADR-0044 OpenClaw/Codex Grid Review Runner request generation for repository PRs.
 - **Architecture Overhaul**: Complete restructure of SQL Server specialization
 - Enhanced `SqlServerDataOptions` with improved retry configuration
 - Improved `SqlServerHealthContributor` with server metadata retrieval
