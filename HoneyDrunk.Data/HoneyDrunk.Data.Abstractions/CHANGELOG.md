@@ -10,12 +10,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+
+- Enabled ADR-0044 OpenClaw/Codex Grid Review Runner request generation for repository PRs.
 - Refreshed HoneyDrunk.Standards to 0.2.9 for ADR-0047 testing tooling alignment.
 
 ## [0.6.0] - 2026-05-18
 
 ### Changed
 
+
+- Enabled ADR-0044 OpenClaw/Codex Grid Review Runner request generation for repository PRs.
 - Package version bumped to `0.6.0` and Kernel abstractions reference aligned to `0.7.0`.
 
 ## [0.5.1] - 2026-05-04
@@ -28,12 +32,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+
+- Enabled ADR-0044 OpenClaw/Codex Grid Review Runner request generation for repository PRs.
 - Coordinated package train bump for the ADR-0005/0006 Data rollout.
 
 ## [0.2.0] - 2026-01-06
 
 ### Changed
 
+
+- Enabled ADR-0044 OpenClaw/Codex Grid Review Runner request generation for repository PRs.
 - **Architecture Overhaul**: Complete restructure of abstractions for improved clarity and extensibility
 - Improved `IReadOnlyRepository<T>` with better expression-based query support
 - Enhanced `IRepository<T>` with `RemoveRange` method

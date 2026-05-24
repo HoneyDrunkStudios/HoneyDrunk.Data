@@ -10,12 +10,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+
+- Enabled ADR-0044 OpenClaw/Codex Grid Review Runner request generation for repository PRs.
 - Refreshed HoneyDrunk.Standards to 0.2.9 for ADR-0047 testing tooling alignment.
 
 ## [0.6.0] - 2026-05-18
 
 ### Changed
 
+
+- Enabled ADR-0044 OpenClaw/Codex Grid Review Runner request generation for repository PRs.
 - Package version bumped to `0.6.0` and Vault provider reference aligned to `0.5.0`.
 
 ## [0.5.1] - 2026-05-04
@@ -28,6 +32,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+
+- Enabled ADR-0044 OpenClaw/Codex Grid Review Runner request generation for repository PRs.
 - `MigrationDbContextFactory<TContext>` now bootstraps HoneyDrunk.Vault from `AZURE_KEYVAULT_URI` and resolves `Sql--MigrationConnection` through `ISecretStore`.
 - Removed the `HONEYDRUNK_MIGRATION_CONNECTION` secret-bearing environment variable path.
 - Package version bumped to `0.4.0`.
@@ -42,6 +48,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+
+- Enabled ADR-0044 OpenClaw/Codex Grid Review Runner request generation for repository PRs.
 - **Architecture Overhaul**: Complete restructure of migration tooling
 - Enhanced `MigrationDbContextFactory` with improved configuration options
 - Improved `MigrationRunner` with better async patterns
