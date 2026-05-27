@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- `SqliteTestDatabase<TContext>.ThrowIfDisposed` uses `ObjectDisposedException.ThrowIf(_disposed, this)` instead of an if/throw branch (Sonar S6966). Same exception type and stack semantics; smaller surface area.
+- `SqliteTestDatabase<TContext>.ThrowIfDisposed` uses `ObjectDisposedException.ThrowIf(_disposed, this)` instead of an if/throw branch (Sonar S6966). Exception type is unchanged (`ObjectDisposedException`); `ObjectName` and the stack frame now come from the BCL helper rather than `nameof(SqliteTestDatabase<TContext>)` and an inline `throw`, so any consumer asserting on the exact `ObjectName` string or stack shape will see different values. No callers in the repo rely on either.
 
 ### Internal
 

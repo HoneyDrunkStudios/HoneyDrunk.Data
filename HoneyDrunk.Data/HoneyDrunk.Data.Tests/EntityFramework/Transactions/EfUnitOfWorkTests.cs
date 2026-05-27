@@ -148,19 +148,22 @@ public sealed class EfUnitOfWorkTests : IAsyncDisposable
     }
 
     [Fact]
-    public async Task TransactionScope_RollbackAsync_RollsBackChanges()
+    public async Task TransactionScope_RollbackAsync_DiscardsUncommittedChanges()
     {
-        // Rollback behavior with SQLite in-memory is limited
-        // but we can at least verify the call doesn't throw
         var unitOfWork = new EfUnitOfWork<TestDbContext>(_context);
+        var repo = unitOfWork.Repository<TestEntity>();
 
-        var exception = await Record.ExceptionAsync(async () =>
+        await using (var scope = await unitOfWork.BeginTransactionAsync())
         {
-            await using var scope = await unitOfWork.BeginTransactionAsync();
+            await repo.AddAsync(new TestEntity { Id = Guid.NewGuid(), Name = "RolledBack" });
+            await unitOfWork.SaveChangesAsync();
             await scope.RollbackAsync();
-        });
+        }
 
-        Assert.Null(exception);
+        // After rollback the entity must not be visible from a fresh context
+        // bound to the same SQLite database.
+        using var verificationContext = _factory.Create();
+        Assert.DoesNotContain(verificationContext.TestEntities, e => e.Name == "RolledBack");
     }
 
     [Fact]

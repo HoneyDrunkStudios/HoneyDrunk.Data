@@ -126,8 +126,10 @@ public sealed class SqliteDbContextFixtureTests : IAsyncLifetime, IDisposable
     }
 
     [Fact]
-    public async Task Dispose_CleansUpResources()
+    public async Task Dispose_IsIdempotent()
     {
+        // Both Dispose calls must complete; the second one observes the
+        // already-disposed state and exits without throwing.
         var localFixture = new TestSqliteDbContextFixture();
         await localFixture.InitializeAsync();
 
