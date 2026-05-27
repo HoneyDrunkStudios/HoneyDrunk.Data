@@ -7,8 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.7.0] - 2026-05-27
+
 ### Changed
 
+- `CorrelationCommandInterceptor.SanitizeForSqlComment` switched from a deny-list (strip `*/`, `/*`, `--`, `\n`, `\r`) to a strict allow-list (`[A-Za-z0-9_-]`) with a 128-character cap, the canonical correlation-ID alphabet (RFC 4122 UUIDs, W3C trace-ids, ULIDs). Any other byte — including newlines, quotes, semicolons, and SQL block-comment terminators — is silently dropped, so the assembled `/* correlation:<id> */` envelope cannot be escaped regardless of upstream input. Sonar Security Hotspot (CorrelationCommandInterceptor.cs SQL injection review) addressed; CA2100 suppression retained with the allow-list justification because the analyzer cannot see through the sanitizer.
+- `ModelBuilderConventions.ApplySnakeCaseNamingConvention` cognitive complexity 18 → under 15 (Sonar S3776). Extracted `ApplySnakeCaseToEntity` and `RenameIfPresent` helpers; per-entity nested loops moved out of the public extension method. No behavior change.
+
+### Internal
+
+- Bumped `Microsoft.EntityFrameworkCore` / `Microsoft.EntityFrameworkCore.Relational` `10.0.7 → 10.0.8`.
+- Bumped `Microsoft.Extensions.DependencyInjection.Abstractions` `10.0.7 → 10.0.8`.
 - Refreshed HoneyDrunk.Standards to 0.2.9 for ADR-0047 testing tooling alignment.
 
 ## [0.6.0] - 2026-05-18

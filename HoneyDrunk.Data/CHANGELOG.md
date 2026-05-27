@@ -21,6 +21,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.7.0] - 2026-05-27
+
+### Changed (breaking)
+
+- **`IUnitOfWork<TContext>` now exposes a `Type ContextType { get; }` default interface member.** The `TContext` marker had no member referencing it, which Sonar S2326 flags as "unused type parameter." The DIM surfaces the marker at runtime for diagnostics and assertion in tests without forcing any implementer change (source-compatible for all callers; binary-compatible because DIMs are dispatched off the interface). The composition pattern `IUnitOfWork<IAuditDataContext>` (Audit) and similar continue to work unchanged.
+- **Package versions bumped** to `HoneyDrunk.Data* 0.7.0` per pre-1.0 semver.
+
+### Changed
+
+- `CorrelationCommandInterceptor.SanitizeForSqlComment` switched from a deny-list (strip `*/`, `/*`, `--`, `\n`, `\r`) to a strict allow-list (`[A-Za-z0-9_-]`) with a 128-character cap, the canonical correlation-ID alphabet (RFC 4122 UUIDs, W3C trace-ids, ULIDs). Any other byte — including newlines, quotes, semicolons, and SQL block-comment terminators — is silently dropped, so the assembled `/* correlation:<id> */` envelope cannot be escaped regardless of upstream input. Sonar Security Hotspot (CorrelationCommandInterceptor.cs SQL injection review) addressed; CA2100 suppression retained with the allow-list justification because the analyzer cannot see through the sanitizer. Two new `Theory` cases (`;DROP TABLE Users`, `'OR'1'='1`) plus three new `Fact` tests cover UUID preservation, length cap, and the all-stripped path.
+- `ModelBuilderConventions.ApplySnakeCaseNamingConvention` cognitive complexity 18 → under 15 (Sonar S3776). Extracted `ApplySnakeCaseToEntity` and `RenameIfPresent` helpers; per-entity nested loops moved out of the public extension method.
+- `SqliteTestDatabase<TContext>.ThrowIfDisposed` uses `ObjectDisposedException.ThrowIf(_disposed, this)` instead of an if/throw branch (Sonar S6966).
+
+### Tests
+
+- 7 Sonar Blocker S2699 ("Tests should include assertions") findings cleared by wrapping the "does not throw" bodies in `Record.Exception` / `Record.ExceptionAsync` + `Assert.Null(exception)`:
+  - `EfUnitOfWorkTests.TransactionScope_RollbackAsync_RollsBackChanges`, `EfUnitOfWorkTests.DisposeAsync_CalledMultipleTimes_DoesNotThrow`
+  - `SqliteTestDbContextFactoryTests.DisposeAsync_ClosesConnection`, `SqliteTestDbContextFactoryTests.DisposeAsync_CalledMultipleTimes_DoesNotThrow`
+  - `SqliteDbContextFixtureTests.DisposeAsync_CalledMultipleTimes_DoesNotThrow`, `SqliteDbContextFixtureTests.Dispose_CleansUpResources`
+  - `DatabaseResetHelperTests.DetachAllEntities_WithNoTrackedEntities_DoesNotThrow`
+
 ### Internal
 
 - Onboarded Data to SonarQube Cloud (ADR-0011 D11). Wired a `sonarcloud` job in `pr.yml` that calls `HoneyDrunkStudios/HoneyDrunk.Actions/.github/workflows/job-sonarcloud.yml` on both `pull_request` (after `pr-core` succeeds) and `push` to `main` (standalone). PR analysis gates the merge on new-code findings; main-branch analysis populates the SonarCloud Overview dashboard and the leak-period baseline. Per-project source/test classification is discovered automatically from MSBuild `IsTestProject` properties; per-repo Sonar overrides can be added later via `Directory.Build.props` `<SonarQubeSetting>` items or as new inputs to `job-sonarcloud.yml`. Branch-protection requirement added separately after the first successful run lands.
@@ -28,6 +49,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Adopted HoneyDrunk.Standards.Tests 0.2.9 for Data test/canary/testing projects and refreshed HoneyDrunk.Standards to 0.2.9 for ADR-0047 testing alignment.
 - Backfilled Data outbox registration test coverage above the Grid PR coverage gate floor.
 - Seeded the Data coverage baseline and wired the push-to-main coverage baseline ratchet.
+- Bumped `HoneyDrunk.Kernel` / `HoneyDrunk.Kernel.Abstractions` `0.7.0 → 0.8.0`.
+- Bumped `HoneyDrunk.Vault` / `HoneyDrunk.Vault.Providers.AppConfiguration` / `HoneyDrunk.Vault.Providers.AzureKeyVault` / `HoneyDrunk.Vault.EventGrid` `0.5.0 → 0.7.0` (Vault 0.6.0 SonarCloud onboarding + 0.7.0 DIM promotion).
+- Bumped `HoneyDrunk.Transport` `0.6.0 → 0.7.1`.
+- Bumped `Microsoft.EntityFrameworkCore` / `.Sqlite` / `.SqlServer` / `.Relational` / `.Design` / `.InMemory` and `Microsoft.Extensions.DependencyInjection` / `.DependencyInjection.Abstractions` / `.Hosting` / `.Hosting.Abstractions` / `.Logging.Abstractions` / `.Options` `10.0.7 → 10.0.8`.
 
 ## [0.6.0] - 2026-05-18
 
@@ -104,6 +129,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Migration infrastructure with `MigrationRunner`
 - Testing utilities in `HoneyDrunk.Data.Testing`
 
+[0.7.0]: https://github.com/HoneyDrunkStudios/HoneyDrunk.Data/releases/tag/v0.7.0
+[0.6.0]: https://github.com/HoneyDrunkStudios/HoneyDrunk.Data/releases/tag/v0.6.0
 [0.5.1]: https://github.com/HoneyDrunkStudios/HoneyDrunk.Data/releases/tag/v0.5.1
 [0.5.0]: https://github.com/HoneyDrunkStudios/HoneyDrunk.Data/releases/tag/v0.5.0
 [0.4.0]: https://github.com/HoneyDrunkStudios/HoneyDrunk.Data/releases/tag/v0.4.0

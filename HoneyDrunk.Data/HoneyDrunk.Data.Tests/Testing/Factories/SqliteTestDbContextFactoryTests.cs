@@ -96,8 +96,11 @@ public sealed class SqliteTestDbContextFactoryTests : IAsyncDisposable
     }
 
     [Fact]
-    public async Task DisposeAsync_ClosesConnection()
+    public async Task DisposeAsync_ThenContextDispose_DoesNotThrow()
     {
+        // The factory's DisposeAsync tears down the SqliteTestDatabase which owns
+        // the keep-alive connection. The context it created is independent and
+        // should still be disposable without throwing.
         var localFactory = new SqliteTestDbContextFactory<TestDbContext>(
             options => new TestDbContext(
                 options,
@@ -107,16 +110,20 @@ public sealed class SqliteTestDbContextFactoryTests : IAsyncDisposable
 
         await localFactory.DisposeAsync();
 
-        // After disposing the factory, the connection is closed
-        // Attempting operations on the context may fail or succeed depending on state
-        // We verify the factory can be disposed without throwing
-        await context.DisposeAsync();
+        var exception = await Record.ExceptionAsync(() => context.DisposeAsync().AsTask());
+
+        Assert.Null(exception);
     }
 
     [Fact]
     public async Task DisposeAsync_CalledMultipleTimes_DoesNotThrow()
     {
-        await _factory.DisposeAsync();
-        await _factory.DisposeAsync();
+        var exception = await Record.ExceptionAsync(async () =>
+        {
+            await _factory.DisposeAsync();
+            await _factory.DisposeAsync();
+        });
+
+        Assert.Null(exception);
     }
 }

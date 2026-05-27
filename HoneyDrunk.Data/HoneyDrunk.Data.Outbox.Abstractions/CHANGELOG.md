@@ -2,8 +2,11 @@
 
 ## [Unreleased]
 
-### Changed
+## [0.7.0] - 2026-05-27
 
+### Internal
+
+- Package version bumped to `0.7.0` for the coordinated Data release train.
 - Refreshed HoneyDrunk.Standards to 0.2.9 for ADR-0047 testing tooling alignment.
 
 ## 0.6.0

@@ -7,9 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Changed
+## [0.7.0] - 2026-05-27
 
-- Refreshed HoneyDrunk.Standards to 0.2.9 for ADR-0047 testing tooling alignment.
+### Changed (breaking)
+
+- **`IUnitOfWork<TContext>` exposes a `Type ContextType { get; }` default interface member.** Surfaces the `TContext` marker at runtime for diagnostics and assertion in tests (Sonar S2326: "type parameter is not used"). DIM means no implementer change required; source-compatible for callers, binary-compatible for runtimes that dispatch DIMs (which includes .NET 10). Existing composition patterns like `IUnitOfWork<IAuditDataContext>` continue to work unchanged.
+- **Package version bumped** to `HoneyDrunk.Data.Abstractions 0.7.0`.
+
+### Internal
+
+- Bumped `HoneyDrunk.Kernel.Abstractions` `0.7.0 → 0.8.0`.
+- Refreshed HoneyDrunk.Standards to 0.2.9 for ADR-0047 testing tooling alignment (carried from the prior unreleased window).
 
 ## [0.6.0] - 2026-05-18
 

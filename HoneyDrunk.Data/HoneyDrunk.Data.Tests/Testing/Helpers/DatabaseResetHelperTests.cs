@@ -104,6 +104,8 @@ public sealed class DatabaseResetHelperTests : IAsyncDisposable
     [Fact]
     public void DetachAllEntities_WithNoTrackedEntities_DoesNotThrow()
     {
-        DatabaseResetHelper.DetachAllEntities(_context);
+        var exception = Record.Exception(() => DatabaseResetHelper.DetachAllEntities(_context));
+
+        Assert.Null(exception);
     }
 }
