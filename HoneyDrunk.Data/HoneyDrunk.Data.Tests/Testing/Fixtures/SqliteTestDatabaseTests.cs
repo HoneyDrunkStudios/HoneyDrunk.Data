@@ -23,7 +23,7 @@ public sealed class SqliteTestDatabaseTests
 
         database.Dispose();
 
-        Assert.Throws<ObjectDisposedException>(() => database.CreateContext());
+        Assert.Throws<ObjectDisposedException>(database.CreateContext);
     }
 
     [Fact]
@@ -37,7 +37,7 @@ public sealed class SqliteTestDatabaseTests
 
         await database.DisposeAsync();
 
-        Assert.Throws<ObjectDisposedException>(() => database.CreateContext());
+        Assert.Throws<ObjectDisposedException>(database.CreateContext);
     }
 
     [Fact]
