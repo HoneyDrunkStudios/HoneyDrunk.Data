@@ -6,6 +6,7 @@ using HoneyDrunk.Data.EntityFramework.Transactions;
 using HoneyDrunk.Data.Testing.Factories;
 using HoneyDrunk.Data.Testing.Helpers;
 using HoneyDrunk.Data.Tests.TestFixtures;
+using Microsoft.EntityFrameworkCore;
 
 namespace HoneyDrunk.Data.Tests.EntityFramework.Transactions;
 
@@ -160,10 +161,13 @@ public sealed class EfUnitOfWorkTests : IAsyncDisposable
             await scope.RollbackAsync();
         }
 
-        // After rollback the entity must not be visible from a fresh context
-        // bound to the same SQLite database.
-        using var verificationContext = _factory.Create();
-        Assert.DoesNotContain(verificationContext.TestEntities, e => e.Name == "RolledBack");
+        // Query the same database via AsNoTracking so we hit the DB rather than the
+        // EF change tracker. A rolled-back transaction must leave no row to find.
+        var persisted = await _context.TestEntities
+            .AsNoTracking()
+            .Where(e => e.Name == "RolledBack")
+            .ToListAsync();
+        Assert.Empty(persisted);
     }
 
     [Fact]
