@@ -2,6 +2,7 @@
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace HoneyDrunk.Data.EntityFramework.Modeling;
 
@@ -22,41 +23,7 @@ public static class ModelBuilderConventions
 
         foreach (var entity in modelBuilder.Model.GetEntityTypes())
         {
-            var tableName = ToSnakeCase(entity.GetTableName() ?? entity.ClrType.Name);
-            entity.SetTableName(tableName);
-
-            foreach (var property in entity.GetProperties())
-            {
-                var columnName = ToSnakeCase(property.GetColumnName());
-                property.SetColumnName(columnName);
-            }
-
-            foreach (var key in entity.GetKeys())
-            {
-                var keyName = key.GetName();
-                if (!string.IsNullOrEmpty(keyName))
-                {
-                    key.SetName(ToSnakeCase(keyName));
-                }
-            }
-
-            foreach (var foreignKey in entity.GetForeignKeys())
-            {
-                var constraintName = foreignKey.GetConstraintName();
-                if (!string.IsNullOrEmpty(constraintName))
-                {
-                    foreignKey.SetConstraintName(ToSnakeCase(constraintName));
-                }
-            }
-
-            foreach (var index in entity.GetIndexes())
-            {
-                var indexName = index.GetDatabaseName();
-                if (!string.IsNullOrEmpty(indexName))
-                {
-                    index.SetDatabaseName(ToSnakeCase(indexName));
-                }
-            }
+            ApplySnakeCaseToEntity(entity);
         }
 
         return modelBuilder;
@@ -80,6 +47,39 @@ public static class ModelBuilderConventions
         }
 
         return modelBuilder;
+    }
+
+    private static void ApplySnakeCaseToEntity(IMutableEntityType entity)
+    {
+        entity.SetTableName(ToSnakeCase(entity.GetTableName() ?? entity.ClrType.Name));
+
+        foreach (var property in entity.GetProperties())
+        {
+            property.SetColumnName(ToSnakeCase(property.GetColumnName()));
+        }
+
+        foreach (var key in entity.GetKeys())
+        {
+            RenameIfPresent(key.GetName(), name => key.SetName(name));
+        }
+
+        foreach (var foreignKey in entity.GetForeignKeys())
+        {
+            RenameIfPresent(foreignKey.GetConstraintName(), name => foreignKey.SetConstraintName(name));
+        }
+
+        foreach (var index in entity.GetIndexes())
+        {
+            RenameIfPresent(index.GetDatabaseName(), name => index.SetDatabaseName(name));
+        }
+    }
+
+    private static void RenameIfPresent(string? originalName, Action<string> setter)
+    {
+        if (!string.IsNullOrEmpty(originalName))
+        {
+            setter(ToSnakeCase(originalName));
+        }
     }
 
     private static string ToSnakeCase(string input)

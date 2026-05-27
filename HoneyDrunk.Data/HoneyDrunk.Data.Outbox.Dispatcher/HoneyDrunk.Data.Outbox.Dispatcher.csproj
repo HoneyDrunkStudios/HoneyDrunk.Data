@@ -8,10 +8,10 @@
 
     <!-- Package Metadata -->
     <PackageId>HoneyDrunk.Data.Outbox.Dispatcher</PackageId>
-    <Version>0.6.0</Version>
+    <Version>0.7.0</Version>
     <Authors>HoneyDrunk Studios</Authors>
     <Description>Background dispatcher for the HoneyDrunk.Data transactional outbox. Polls pending messages and publishes them through HoneyDrunk.Transport abstractions with lease-based concurrency, configurable retry, and exponential backoff. Adapter-agnostic — references no specific message bus.</Description>
-    <PackageReleaseNotes>v0.6.0: Align with Kernel 0.7.0/Core release train, consolidate EF/SQL/SQLite helpers, and require valid outbox context enrichment.</PackageReleaseNotes>
+    <PackageReleaseNotes>v0.7.0: ADR-0011 D11 Sonar cleanup — IUnitOfWork&lt;TContext&gt; exposes ContextType DIM, CorrelationCommandInterceptor switches to a strict allow-list sanitizer, EF naming convention refactored under cognitive-complexity limit. Bumps Kernel 0.7.0→0.8.0, Vault* 0.5.0→0.7.0, Transport 0.6.0→0.7.1, Microsoft.EntityFrameworkCore* and Microsoft.Extensions.* 10.0.7→10.0.8.</PackageReleaseNotes>
     <PackageTags>data;outbox;dispatcher;background-service;transport;retry;kernel;grid</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
@@ -29,10 +29,10 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="HoneyDrunk.Transport" Version="0.6.0" />
-    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="10.0.7" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.7" />
-    <PackageReference Include="Microsoft.Extensions.Options" Version="10.0.7" />
+    <PackageReference Include="HoneyDrunk.Transport" Version="0.7.1" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="10.0.8" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.8" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="10.0.8" />
   </ItemGroup>
 
   <ItemGroup>

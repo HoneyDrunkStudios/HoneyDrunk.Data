@@ -145,8 +145,13 @@ public sealed class EfUnitOfWorkTests : IAsyncDisposable
         // but we can at least verify the call doesn't throw
         var unitOfWork = new EfUnitOfWork<TestDbContext>(_context);
 
-        await using var scope = await unitOfWork.BeginTransactionAsync();
-        await scope.RollbackAsync();
+        var exception = await Record.ExceptionAsync(async () =>
+        {
+            await using var scope = await unitOfWork.BeginTransactionAsync();
+            await scope.RollbackAsync();
+        });
+
+        Assert.Null(exception);
     }
 
     [Fact]
@@ -167,7 +172,12 @@ public sealed class EfUnitOfWorkTests : IAsyncDisposable
     {
         var unitOfWork = new EfUnitOfWork<TestDbContext>(_context);
 
-        await unitOfWork.DisposeAsync();
-        await unitOfWork.DisposeAsync();
+        var exception = await Record.ExceptionAsync(async () =>
+        {
+            await unitOfWork.DisposeAsync();
+            await unitOfWork.DisposeAsync();
+        });
+
+        Assert.Null(exception);
     }
 }

@@ -9,10 +9,10 @@
 
     <!-- Package Metadata -->
     <PackageId>HoneyDrunk.Data.AspNetCore</PackageId>
-    <Version>0.6.0</Version>
+    <Version>0.7.0</Version>
     <Authors>HoneyDrunk Studios</Authors>
     <Description>ASP.NET Core integration for HoneyDrunk.Data. Provides Event Grid Vault cache invalidation endpoint helpers for ADR-0006 secret rotation propagation.</Description>
-    <PackageReleaseNotes>v0.6.0: Align with Kernel 0.7.0/Core release train, consolidate EF/SQL/SQLite helpers, and require valid outbox context enrichment.</PackageReleaseNotes>
+    <PackageReleaseNotes>v0.7.0: ADR-0011 D11 Sonar cleanup — IUnitOfWork&lt;TContext&gt; exposes ContextType DIM, CorrelationCommandInterceptor switches to a strict allow-list sanitizer, EF naming convention refactored under cognitive-complexity limit. Bumps Kernel 0.7.0→0.8.0, Vault* 0.5.0→0.7.0, Transport 0.6.0→0.7.1, Microsoft.EntityFrameworkCore* and Microsoft.Extensions.* 10.0.7→10.0.8.</PackageReleaseNotes>
     <PackageTags>data;persistence;aspnetcore;eventgrid;vault;cache;rotation;webhook</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
@@ -30,12 +30,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="HoneyDrunk.Kernel.Abstractions" Version="0.7.0" />
+    <PackageReference Include="HoneyDrunk.Kernel.Abstractions" Version="0.8.0" />
     <PackageReference Include="HoneyDrunk.Standards" Version="0.2.9">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="HoneyDrunk.Vault.EventGrid" Version="0.5.0" />
+    <PackageReference Include="HoneyDrunk.Vault.EventGrid" Version="0.7.0" />
   </ItemGroup>
 
   <ItemGroup>

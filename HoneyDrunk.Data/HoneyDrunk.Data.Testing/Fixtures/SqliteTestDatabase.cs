@@ -112,10 +112,7 @@ public sealed class SqliteTestDatabase<TContext> : IAsyncDisposable, IDisposable
 
     private void ThrowIfDisposed()
     {
-        if (_disposed)
-        {
-            throw new ObjectDisposedException(nameof(SqliteTestDatabase<TContext>));
-        }
+        ObjectDisposedException.ThrowIf(_disposed, this);
     }
 
     private void TryDeleteDatabase()

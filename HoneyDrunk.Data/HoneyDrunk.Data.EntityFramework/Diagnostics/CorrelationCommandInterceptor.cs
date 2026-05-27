@@ -5,6 +5,7 @@ using HoneyDrunk.Data.Abstractions.Diagnostics;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using System.Data.Common;
 using System.Diagnostics.CodeAnalysis;
+using System.Text;
 
 namespace HoneyDrunk.Data.EntityFramework.Diagnostics;
 
@@ -13,9 +14,7 @@ namespace HoneyDrunk.Data.EntityFramework.Diagnostics;
 /// </summary>
 public sealed class CorrelationCommandInterceptor : DbCommandInterceptor
 {
-    private const string SuppressJustification =
-        "Correlation ID is an internal system identifier, not user input. " +
-        "It's added as a SQL comment and does not affect query execution.";
+    private const int MaxSanitizedLength = 128;
 
     private readonly IDataDiagnosticsContext _diagnosticsContext;
 
@@ -92,18 +91,34 @@ public sealed class CorrelationCommandInterceptor : DbCommandInterceptor
         return base.ScalarExecutingAsync(command, eventData, result, cancellationToken);
     }
 
+    // Allow-list sanitizer: copies only characters from a fixed safe alphabet
+    // (alphanumeric + '-' + '_'), the canonical correlation-ID alphabet (RFC 4122
+    // UUIDs, W3C trace-id hex, ULIDs). Any other byte — including SQL comment
+    // terminators, newlines, quotes, semicolons — is silently dropped, so the
+    // composed comment cannot escape its `/* ... */` envelope regardless of
+    // upstream input. Capped at MaxSanitizedLength to bound command growth.
     private static string SanitizeForSqlComment(string value)
     {
-        // Remove any characters that could break out of a SQL comment
-        return value
-            .Replace("*/", string.Empty, StringComparison.Ordinal)
-            .Replace("/*", string.Empty, StringComparison.Ordinal)
-            .Replace("--", string.Empty, StringComparison.Ordinal)
-            .Replace("\n", string.Empty, StringComparison.Ordinal)
-            .Replace("\r", string.Empty, StringComparison.Ordinal);
+        var builder = new StringBuilder(Math.Min(value.Length, MaxSanitizedLength));
+        for (var i = 0; i < value.Length && builder.Length < MaxSanitizedLength; i++)
+        {
+            var c = value[i];
+            if (char.IsAsciiLetterOrDigit(c) || c == '-' || c == '_')
+            {
+                builder.Append(c);
+            }
+        }
+
+        return builder.ToString();
     }
 
-    [SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = SuppressJustification)]
+    // CA2100 cannot see through SanitizeForSqlComment's allow-list. The sanitizer
+    // only copies characters from [A-Za-z0-9_-] and caps length at MaxSanitizedLength,
+    // so the assembled `/* correlation:<...> */` cannot escape its block-comment
+    // envelope. The original `command.CommandText` is preserved verbatim; we only
+    // prefix a constant-shape comment, no parameterization is possible for SQL
+    // comments. Sonar Security Hotspot review reaches the same conclusion.
+    [SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "Correlation ID is filtered through a strict allow-list ([A-Za-z0-9_-]) and length-capped before being embedded as a SQL block comment; the wrapping `/* */` cannot be escaped.")]
     private void AddCorrelationComment(DbCommand command)
     {
         var correlationId = _diagnosticsContext.CorrelationId;
@@ -112,9 +127,12 @@ public sealed class CorrelationCommandInterceptor : DbCommandInterceptor
             return;
         }
 
-        // Sanitize correlation ID to ensure it only contains safe characters for SQL comments
         var sanitizedId = SanitizeForSqlComment(correlationId);
-        var comment = $"/* correlation:{sanitizedId} */";
-        command.CommandText = $"{comment}\n{command.CommandText}";
+        if (sanitizedId.Length == 0)
+        {
+            return;
+        }
+
+        command.CommandText = $"/* correlation:{sanitizedId} */\n{command.CommandText}";
     }
 }

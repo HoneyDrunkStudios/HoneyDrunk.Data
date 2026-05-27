@@ -2,8 +2,13 @@
 
 ## [Unreleased]
 
-### Changed
+## [0.7.0] - 2026-05-27
 
+### Internal
+
+- Bumped `HoneyDrunk.Kernel.Abstractions` `0.7.0 → 0.8.0`.
+- Bumped `Microsoft.EntityFrameworkCore` / `Microsoft.EntityFrameworkCore.Relational` `10.0.7 → 10.0.8`.
+- Bumped `Microsoft.Extensions.DependencyInjection.Abstractions` / `.Logging.Abstractions` / `.Options` `10.0.7 → 10.0.8`.
 - Refreshed HoneyDrunk.Standards to 0.2.9 for ADR-0047 testing tooling alignment.
 
 ## 0.6.0

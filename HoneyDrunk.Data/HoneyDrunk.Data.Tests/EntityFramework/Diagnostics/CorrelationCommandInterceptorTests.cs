@@ -92,12 +92,21 @@ public sealed class CorrelationCommandInterceptorTests
         Assert.StartsWith("/* correlation:scalar-correlation */", command.CommandText);
     }
 
+    // Allow-list sanitizer accepts ASCII alphanumerics plus '-' and '_'
+    // (the standard UUID / W3C trace-id / ULID alphabet). Every other byte —
+    // including SQL block-comment terminators '*/' and '/*', newlines, quotes,
+    // semicolons — is silently dropped, so the assembled `/* ... */` envelope
+    // cannot be escaped regardless of upstream input. '--' is not in this list
+    // because it is harmless inside a block comment (block comments do not
+    // terminate on '--'); the hyphens themselves remain so UUIDs render
+    // recognisably.
     [Theory]
     [InlineData("*/")]
     [InlineData("/*")]
-    [InlineData("--")]
     [InlineData("\n")]
     [InlineData("\r")]
+    [InlineData(";DROP TABLE Users")]
+    [InlineData("'OR'1'='1")]
     public void AddCorrelationComment_SanitizesDangerousCharacters(string dangerousSequence)
     {
         var correlationId = $"before{dangerousSequence}after";
@@ -109,8 +118,6 @@ public sealed class CorrelationCommandInterceptorTests
 
         interceptor.ReaderExecuting(command, CreateEventData(), default);
 
-        // The dangerous sequence should be removed from the correlation ID portion
-        // The comment structure (/* */) and newline after it are expected
         var commentStart = command.CommandText.IndexOf("correlation:", StringComparison.Ordinal);
         var commentEnd = command.CommandText.IndexOf(" */", StringComparison.Ordinal);
         var correlationPart = command.CommandText.Substring(
@@ -118,7 +125,58 @@ public sealed class CorrelationCommandInterceptorTests
             commentEnd - commentStart - "correlation:".Length);
 
         Assert.DoesNotContain(dangerousSequence, correlationPart);
-        Assert.Equal("beforeafter", correlationPart);
+    }
+
+    [Fact]
+    public void AddCorrelationComment_PreservesUuidHyphens()
+    {
+        var uuid = "550e8400-e29b-41d4-a716-446655440000";
+        var diagnostics = Substitute.For<IDataDiagnosticsContext>();
+        diagnostics.CorrelationId.Returns(uuid);
+
+        var interceptor = new CorrelationCommandInterceptor(diagnostics);
+        var command = CreateMockCommand("SELECT 1");
+
+        interceptor.ReaderExecuting(command, CreateEventData(), default);
+
+        Assert.StartsWith($"/* correlation:{uuid} */", command.CommandText);
+    }
+
+    [Fact]
+    public void AddCorrelationComment_CapsExcessivelyLongIdentifier()
+    {
+        var oversized = new string('a', 500);
+        var diagnostics = Substitute.For<IDataDiagnosticsContext>();
+        diagnostics.CorrelationId.Returns(oversized);
+
+        var interceptor = new CorrelationCommandInterceptor(diagnostics);
+        var command = CreateMockCommand("SELECT 1");
+
+        interceptor.ReaderExecuting(command, CreateEventData(), default);
+
+        var commentStart = command.CommandText.IndexOf("correlation:", StringComparison.Ordinal);
+        var commentEnd = command.CommandText.IndexOf(" */", StringComparison.Ordinal);
+        var correlationPart = command.CommandText.Substring(
+            commentStart + "correlation:".Length,
+            commentEnd - commentStart - "correlation:".Length);
+
+        Assert.Equal(128, correlationPart.Length);
+    }
+
+    [Fact]
+    public void AddCorrelationComment_AllStrippedInputDoesNotModifyCommand()
+    {
+        // Every character below is outside the allow-list ([A-Za-z0-9_-]), so the
+        // sanitizer should return empty and the command must be unchanged.
+        var diagnostics = Substitute.For<IDataDiagnosticsContext>();
+        diagnostics.CorrelationId.Returns("'\";/*\\");
+
+        var interceptor = new CorrelationCommandInterceptor(diagnostics);
+        var command = CreateMockCommand("SELECT 1");
+
+        interceptor.ReaderExecuting(command, CreateEventData(), default);
+
+        Assert.Equal("SELECT 1", command.CommandText);
     }
 
     [Fact]

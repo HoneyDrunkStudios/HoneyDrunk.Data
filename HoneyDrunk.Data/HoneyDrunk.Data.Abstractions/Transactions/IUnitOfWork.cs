@@ -32,7 +32,10 @@ public interface IUnitOfWork : IAsyncDisposable
 }
 
 /// <summary>
-/// Extended unit of work that provides access to repositories.
+/// Extended unit of work that provides access to repositories, scoped to a specific
+/// persistence context. <typeparamref name="TContext"/> is a discriminator marker so
+/// the DI container can register and resolve a distinct <c>IUnitOfWork</c> per context
+/// (e.g. <c>IUnitOfWork&lt;IAuditDataContext&gt;</c> vs <c>IUnitOfWork&lt;IBillingDataContext&gt;</c>).
 /// </summary>
 /// <typeparam name="TContext">The context type marker.</typeparam>
 #pragma warning disable SA1402 // File may only contain a single type
@@ -40,6 +43,13 @@ public interface IUnitOfWork<TContext> : IUnitOfWork
 #pragma warning restore SA1402 // File may only contain a single type
     where TContext : class
 {
+    /// <summary>
+    /// Gets the persistence context type this unit of work is scoped to.
+    /// Exposes the <typeparamref name="TContext"/> marker at runtime for diagnostics
+    /// and assertion in tests.
+    /// </summary>
+    Type ContextType => typeof(TContext);
+
     /// <summary>
     /// Gets a repository for the specified entity type.
     /// </summary>

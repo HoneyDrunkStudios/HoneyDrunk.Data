@@ -109,14 +109,21 @@ public sealed class SqliteTestDbContextFactoryTests : IAsyncDisposable
 
         // After disposing the factory, the connection is closed
         // Attempting operations on the context may fail or succeed depending on state
-        // We verify the factory can be disposed without throwing
-        await context.DisposeAsync();
+        // We verify the factory dispose + subsequent context dispose do not throw
+        var exception = await Record.ExceptionAsync(() => context.DisposeAsync().AsTask());
+
+        Assert.Null(exception);
     }
 
     [Fact]
     public async Task DisposeAsync_CalledMultipleTimes_DoesNotThrow()
     {
-        await _factory.DisposeAsync();
-        await _factory.DisposeAsync();
+        var exception = await Record.ExceptionAsync(async () =>
+        {
+            await _factory.DisposeAsync();
+            await _factory.DisposeAsync();
+        });
+
+        Assert.Null(exception);
     }
 }

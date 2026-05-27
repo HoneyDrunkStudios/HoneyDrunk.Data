@@ -116,8 +116,13 @@ public sealed class SqliteDbContextFixtureTests : IAsyncLifetime, IDisposable
         var localFixture = new TestSqliteDbContextFixture();
         await localFixture.InitializeAsync();
 
-        await localFixture.DisposeAsync();
-        await localFixture.DisposeAsync();
+        var exception = await Record.ExceptionAsync(async () =>
+        {
+            await localFixture.DisposeAsync();
+            await localFixture.DisposeAsync();
+        });
+
+        Assert.Null(exception);
     }
 
     [Fact]
@@ -126,9 +131,12 @@ public sealed class SqliteDbContextFixtureTests : IAsyncLifetime, IDisposable
         var localFixture = new TestSqliteDbContextFixture();
         await localFixture.InitializeAsync();
 
-        localFixture.Dispose();
+        var exception = Record.Exception(() =>
+        {
+            localFixture.Dispose();
+            localFixture.Dispose();
+        });
 
-        // Calling dispose again should not throw
-        localFixture.Dispose();
+        Assert.Null(exception);
     }
 }
