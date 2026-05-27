@@ -1,6 +1,7 @@
 // Copyright (c) HoneyDrunk Studios. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+using HoneyDrunk.Data.Abstractions.Transactions;
 using HoneyDrunk.Data.EntityFramework.Transactions;
 using HoneyDrunk.Data.Testing.Factories;
 using HoneyDrunk.Data.Testing.Helpers;
@@ -36,6 +37,14 @@ public sealed class EfUnitOfWorkTests : IAsyncDisposable
     public void Constructor_WithNullContext_ThrowsArgumentNullException()
     {
         Assert.Throws<ArgumentNullException>(() => new EfUnitOfWork<TestDbContext>(null!));
+    }
+
+    [Fact]
+    public void ContextType_ReturnsClosedMarkerType()
+    {
+        IUnitOfWork<TestDbContext> unitOfWork = new EfUnitOfWork<TestDbContext>(_context);
+
+        Assert.Equal(typeof(TestDbContext), unitOfWork.ContextType);
     }
 
     [Fact]
