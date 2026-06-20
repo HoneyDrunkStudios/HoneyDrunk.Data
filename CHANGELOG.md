@@ -9,9 +9,9 @@ Per-package detail lives in the solution-level changelog at
 [`HoneyDrunk.Data/CHANGELOG.md`](HoneyDrunk.Data/CHANGELOG.md) and in each
 package's own `CHANGELOG.md`.
 
-## Unreleased
+## [Unreleased]
 
-## 0.7.0 - Outbox hardening and SonarCloud onboarding
+## [0.7.0] - 2026-05-27 - Outbox hardening and SonarCloud onboarding
 
 ### Added
 
@@ -25,7 +25,7 @@ package's own `CHANGELOG.md`.
 - Reduced cognitive complexity in `ModelBuilderConventions.ApplySnakeCaseNamingConvention` and simplified `SqliteTestDatabase` disposal guards.
 - Bumped Kernel to `0.8.0`, Vault packages to `0.7.0`, Transport to `0.7.1`, and EF Core / Microsoft.Extensions packages to `10.0.8`.
 
-## 0.6.0 - Registration consolidation
+## [0.6.0] - 2026-05-18 - Registration consolidation
 
 ### Changed
 
@@ -35,19 +35,19 @@ package's own `CHANGELOG.md`.
 
 - Outbox context autopopulation now fails fast when operation context is missing or incomplete unless explicit correlation and tenant ids are provided.
 
-## 0.5.1 - Package metadata fix
+## [0.5.1] - 2026-05-04 - Package metadata fix
 
 ### Fixed
 
 - Corrected NuGet package release metadata across the Data solution after the 0.5.0 typed tenant adoption release.
 
-## 0.5.0 - Typed tenant context
+## [0.5.0] - 2026-05-04 - Typed tenant context
 
 ### Changed
 
 - Adopted Kernel 0.5.0 typed tenant context values across Data's Kernel context adapters while preserving Data's public tenant abstractions.
 
-## 0.4.0 - Vault-driven bootstrap
+## [0.4.0] - 2026-04-25 - Vault-driven bootstrap
 
 ### Added
 
@@ -58,13 +58,13 @@ package's own `CHANGELOG.md`.
 
 - SQL Server registration now resolves connection strings through `ISecretStore` per DbContext resolution.
 
-## 0.3.0 - Canary invariant tests
+## [0.3.0] - 2026-02-15 - Canary invariant tests
 
 ### Added
 
 - `HoneyDrunk.Data.Canary` project with 18 CI invariant tests covering Kernel context, outbox concurrency, and transport boundary isolation.
 
-## 0.2.0 - Orchestration restructure
+## [0.2.0] - 2026-01-06 - Orchestration restructure
 
 ### Added
 
@@ -75,7 +75,7 @@ package's own `CHANGELOG.md`.
 
 - Restructured the orchestration layer for improved Kernel integration.
 
-## 0.1.0 - Initial release
+## [0.1.0] - 2026-01-01 - Initial release
 
 ### Added
 
