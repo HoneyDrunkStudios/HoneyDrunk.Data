@@ -73,7 +73,7 @@ dotnet add package HoneyDrunk.Data.Outbox.Dispatcher     # Background dispatch v
 
 This example shows a web application with Kernel, EF Core, and SQL Server. Simpler setups are possible—see package-specific documentation.
 
-> **Registration order matters.** See [Registration Contract](docs/Architecture.md#registration-contract) for details on ordering and failure modes.
+> **Registration order matters.** Registration follows a strict ordering (Kernel → Data → provider); registering out of order produces startup failures. See the [Registration Contract](HoneyDrunk.Data/docs/Architecture.md#registration-contract) for the full canonical order and method dependencies.
 
 ```csharp
 using HoneyDrunk.Data.Registration;
@@ -280,15 +280,7 @@ services
 
 ## 📖 Documentation
 
-### Package Documentation
-- **[Abstractions](docs/Abstractions.md)** - Core contracts (tenant, repository, unit of work, diagnostics)
-- **[Orchestration](docs/Orchestration.md)** - Kernel integration layer
-- **[EntityFramework](docs/EntityFramework.md)** - EF Core provider implementation
-- **[SqlServer](docs/SqlServer.md)** - SQL Server specialization
-- **[Migrations](docs/Migrations.md)** - Migration tooling conventions
-- **[Testing](docs/Testing.md)** - SQLite test infrastructure
-- **[Architecture](docs/Architecture.md)** - Layer responsibilities and design decisions
-- **[Outbox](docs/Outbox.md)** - Transactional outbox pattern with lease-based dispatch
+Package documentation (Abstractions, Orchestration, EntityFramework, SqlServer, Migrations, Testing, Architecture, Outbox) lives alongside the solution under [`HoneyDrunk.Data/docs/`](HoneyDrunk.Data/docs/).
 
 ---
 
