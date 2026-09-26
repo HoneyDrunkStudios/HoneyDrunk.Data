@@ -1,5 +1,29 @@
 # Changelog
 
+## [0.7.1] - 2026-09-26
+
+### Changed
+
+- Refresh stable NuGet dependencies; preserve target frameworks and HoneyDrunk public contracts.
+
+| Dependency | Previous | Updated |
+| --- | --- | --- |
+| Microsoft.CodeAnalysis.NetAnalyzers | 10.0.201 | 10.0.401 |
+| Microsoft.EntityFrameworkCore | 10.0.8 | 10.0.12 |
+| Microsoft.EntityFrameworkCore.Design | 10.0.8 | 10.0.12 |
+| Microsoft.EntityFrameworkCore.InMemory | 10.0.8 | 10.0.12 |
+| Microsoft.EntityFrameworkCore.Relational | 10.0.8 | 10.0.12 |
+| Microsoft.EntityFrameworkCore.SqlServer | 10.0.8 | 10.0.12 |
+| Microsoft.EntityFrameworkCore.Sqlite | 10.0.8 | 10.0.12 |
+| Microsoft.Extensions.DependencyInjection | 10.0.8 | 10.0.12 |
+| Microsoft.Extensions.DependencyInjection.Abstractions | 10.0.8 | 10.0.12 |
+| Microsoft.Extensions.Hosting | 10.0.8 | 10.0.12 |
+| Microsoft.Extensions.Hosting.Abstractions | 10.0.8 | 10.0.12 |
+| Microsoft.Extensions.Logging.Abstractions | 10.0.8 | 10.0.12 |
+| Microsoft.Extensions.Options | 10.0.8 | 10.0.12 |
+| SQLitePCLRaw.bundle_e_sqlite3 | 3.0.3 | 3.0.5 |
+
+
 All notable changes to the HoneyDrunk.Data repository are documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
@@ -8,6 +32,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 Per-package detail lives in the solution-level changelog at
 [`HoneyDrunk.Data/CHANGELOG.md`](HoneyDrunk.Data/CHANGELOG.md) and in each
 package's own `CHANGELOG.md`.
+
+
+
+
+### Verified HoneyDrunk dependencies
+
+- HoneyDrunk.Kernel: 0.8.0 -> 0.8.1 (verified on NuGet.org).
+- HoneyDrunk.Kernel.Abstractions: 0.8.0 -> 0.8.1 (verified on NuGet.org).
+- HoneyDrunk.Standards: 0.2.9 -> 0.3.0 (verified on NuGet.org).
+- HoneyDrunk.Standards.Tests: 0.2.9 -> 0.3.0 (verified on NuGet.org).
+- HoneyDrunk.Transport: 0.7.1 -> 0.7.2 (verified on NuGet.org).
+- HoneyDrunk.Vault: 0.7.0 -> 0.8.1 (verified on NuGet.org).
+- HoneyDrunk.Vault.EventGrid: 0.7.0 -> 0.8.1 (verified on NuGet.org).
+- HoneyDrunk.Vault.Providers.AppConfiguration: 0.7.0 -> 0.8.1 (verified on NuGet.org).
+- HoneyDrunk.Vault.Providers.AzureKeyVault: 0.7.0 -> 0.8.1 (verified on NuGet.org).
 
 ## [Unreleased]
 
