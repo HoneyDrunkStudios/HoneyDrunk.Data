@@ -449,7 +449,7 @@ Applications using HoneyDrunk.Data:
 ## 📖 Additional Resources
 
 ### Official Documentation
-- [README.md](../README.md) - Project overview and quick start
+- [README.md](../../README.md) - Project overview and quick start
 - [CHANGELOG.md](../HoneyDrunk.Data/CHANGELOG.md) - Version history
 
 ### Related Projects
