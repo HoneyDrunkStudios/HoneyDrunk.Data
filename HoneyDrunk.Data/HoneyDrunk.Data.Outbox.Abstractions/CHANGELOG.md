@@ -1,5 +1,11 @@
 # Changelog - HoneyDrunk.Data.Outbox.Abstractions
 
+## [0.7.1] - 2026-09-26
+
+### Changed
+
+- Refresh dependency and shared build-tooling versions; preserve target frameworks and existing public contracts. See the [repository dependency changes](../../CHANGELOG.md).
+
 ## [Unreleased]
 
 ## [0.7.0] - 2026-05-27
