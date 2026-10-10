@@ -19,3 +19,11 @@ dotnet test HoneyDrunk.Data/HoneyDrunk.Data.slnx -c Release --no-build
 ```
 
 Use the checked-in workflow and relevant test documentation for additional integration prerequisites, coverage and consumer checks. Do not use live resources or credentials merely to make a local check pass.
+
+## Code Review Rules
+
+Apply the [shared review criteria](https://github.com/HoneyDrunkStudios/HoneyDrunk.Standards/blob/main/HoneyDrunk.Standards/docs/CONVENTIONS.md#code-review) to changed behavior, using the repository boundaries above. Report actionable findings with the failing path, concrete impact and a small corrective action; disclose unavailable evidence. These rules grant no cross-repository access or merge authority.
+
+- Keep persistence queries/transactions and shared outbox storage mechanics here; applications retain business decisions and explicit tenant filtering. Preserve contracts/implementation dependency direction and reuse existing EF/outbox seams.
+- Trace tracked updates, transaction ownership, leases, rowversion, replay and cancellation under partial failure or concurrency. Flag unintended writes, cross-tenant queries, N+1/unbounded access and unsafe schema changes using a concrete operation.
+- Require focused persistence/contract and contention/replay tests for changed behavior. Check effective EF/schema parity, justified indexes and table/column metadata; keep SQL-project ownership distinct from EF migrations and do not replace tracked updates with generic mutation bindings.
