@@ -31,6 +31,8 @@
     </PackageReference>
     <PackageReference Include="HoneyDrunk.Vault" Version="0.8.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.12" />
+    <!-- Use the patched .NET 10 asset so an older ASP.NET shared framework cannot supersede it. -->
+    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="10.0.13" />
   </ItemGroup>
 
   <ItemGroup>
