@@ -1,0 +1,25 @@
+<Solution>
+  <Folder Name="/Docs/">
+    <File Path="README.md" />
+  </Folder>
+  <Folder Name="/Docs/FileGuide/" />
+  <Folder Name="/Pipelines/">
+    <File Path=".github/workflows/publish.yml" />
+    <File Path=".github/workflows/hive-field-mirror.yml" />
+    <File Path=".github/workflows/nightly-security.yml" />
+    <File Path=".github/workflows/pr.yml" />
+    <File Path=".github/workflows/weekly-deps.yml" />
+  </Folder>
+  <Project Path="src/HoneyDrunk.Data.Abstractions/HoneyDrunk.Data.Abstractions.csproj" />
+  <Project Path="src/HoneyDrunk.Data.AspNetCore/HoneyDrunk.Data.AspNetCore.csproj" />
+  <Project Path="tests/HoneyDrunk.Data.Canary/HoneyDrunk.Data.Canary.csproj" />
+  <Project Path="src/HoneyDrunk.Data.EntityFramework/HoneyDrunk.Data.EntityFramework.csproj" />
+  <Project Path="src/HoneyDrunk.Data.Migrations/HoneyDrunk.Data.Migrations.csproj" />
+  <Project Path="src/HoneyDrunk.Data.Outbox.Abstractions/HoneyDrunk.Data.Outbox.Abstractions.csproj" />
+  <Project Path="src/HoneyDrunk.Data.Outbox.Dispatcher/HoneyDrunk.Data.Outbox.Dispatcher.csproj" />
+  <Project Path="src/HoneyDrunk.Data.Outbox/HoneyDrunk.Data.Outbox.csproj" />
+  <Project Path="src/HoneyDrunk.Data.SqlServer/HoneyDrunk.Data.SqlServer.csproj" />
+  <Project Path="src/HoneyDrunk.Data.Testing/HoneyDrunk.Data.Testing.csproj" />
+  <Project Path="tests/HoneyDrunk.Data.Tests/HoneyDrunk.Data.Tests.csproj" />
+  <Project Path="src/HoneyDrunk.Data/HoneyDrunk.Data.csproj" />
+</Solution>

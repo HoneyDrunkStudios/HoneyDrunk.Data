@@ -35,16 +35,16 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\HoneyDrunk.Data.Abstractions\HoneyDrunk.Data.Abstractions.csproj" />
-    <ProjectReference Include="..\HoneyDrunk.Data.AspNetCore\HoneyDrunk.Data.AspNetCore.csproj" />
-    <ProjectReference Include="..\HoneyDrunk.Data\HoneyDrunk.Data.csproj" />
-    <ProjectReference Include="..\HoneyDrunk.Data.EntityFramework\HoneyDrunk.Data.EntityFramework.csproj" />
-    <ProjectReference Include="..\HoneyDrunk.Data.Outbox.Abstractions\HoneyDrunk.Data.Outbox.Abstractions.csproj" />
-    <ProjectReference Include="..\HoneyDrunk.Data.Outbox\HoneyDrunk.Data.Outbox.csproj" />
-    <ProjectReference Include="..\HoneyDrunk.Data.Outbox.Dispatcher\HoneyDrunk.Data.Outbox.Dispatcher.csproj" />
-    <ProjectReference Include="..\HoneyDrunk.Data.SqlServer\HoneyDrunk.Data.SqlServer.csproj" />
-    <ProjectReference Include="..\HoneyDrunk.Data.Migrations\HoneyDrunk.Data.Migrations.csproj" />
-    <ProjectReference Include="..\HoneyDrunk.Data.Testing\HoneyDrunk.Data.Testing.csproj" />
+    <ProjectReference Include="..\..\src\HoneyDrunk.Data.Abstractions\HoneyDrunk.Data.Abstractions.csproj" />
+    <ProjectReference Include="..\..\src\HoneyDrunk.Data.AspNetCore\HoneyDrunk.Data.AspNetCore.csproj" />
+    <ProjectReference Include="..\..\src\HoneyDrunk.Data\HoneyDrunk.Data.csproj" />
+    <ProjectReference Include="..\..\src\HoneyDrunk.Data.EntityFramework\HoneyDrunk.Data.EntityFramework.csproj" />
+    <ProjectReference Include="..\..\src\HoneyDrunk.Data.Outbox.Abstractions\HoneyDrunk.Data.Outbox.Abstractions.csproj" />
+    <ProjectReference Include="..\..\src\HoneyDrunk.Data.Outbox\HoneyDrunk.Data.Outbox.csproj" />
+    <ProjectReference Include="..\..\src\HoneyDrunk.Data.Outbox.Dispatcher\HoneyDrunk.Data.Outbox.Dispatcher.csproj" />
+    <ProjectReference Include="..\..\src\HoneyDrunk.Data.SqlServer\HoneyDrunk.Data.SqlServer.csproj" />
+    <ProjectReference Include="..\..\src\HoneyDrunk.Data.Migrations\HoneyDrunk.Data.Migrations.csproj" />
+    <ProjectReference Include="..\..\src\HoneyDrunk.Data.Testing\HoneyDrunk.Data.Testing.csproj" />
   </ItemGroup>
 
   <ItemGroup>

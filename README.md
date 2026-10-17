@@ -1,5 +1,10 @@
 # HoneyDrunk.Data
 
+## Repository layout
+
+Open `HoneyDrunk.Data.slnx` from the repository root. Production projects live in `src/`, test and canary projects in `tests/`, and examples in `samples/` where present. Shared build configuration stays at the root; project names, namespaces and package identities are unchanged. Existing documentation and release-history locations are retained.
+
+
 [![PR](https://github.com/HoneyDrunkStudios/HoneyDrunk.Data/actions/workflows/pr.yml/badge.svg)](https://github.com/HoneyDrunkStudios/HoneyDrunk.Data/actions/workflows/pr.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![.NET 10](https://img.shields.io/badge/.NET-10.0-512BD4)](https://dotnet.microsoft.com/download/dotnet/10.0)
@@ -288,19 +293,19 @@ Package documentation (Abstractions, Orchestration, EntityFramework, SqlServer, 
 
 ```
 HoneyDrunk.Data/
-├── HoneyDrunk.Data.Abstractions/       # Contracts (no Kernel, no EF Core)
+├── src/HoneyDrunk.Data.Abstractions/       # Contracts (no Kernel, no EF Core)
 │   ├── Diagnostics/                     # Health check contracts
 │   ├── Repositories/                    # Repository interfaces
 │   ├── Tenancy/                         # Tenant identity contracts
 │   └── Transactions/                    # Unit of work contracts
 │
-├── HoneyDrunk.Data/                     # Orchestration layer (requires Kernel)
+├── src/HoneyDrunk.Data/                     # Orchestration layer (requires Kernel)
 │   ├── Configuration/                   # DataOptions
 │   ├── Diagnostics/                     # Kernel diagnostics integration
 │   ├── Registration/                    # DI extensions
 │   └── Tenancy/                         # Kernel tenant accessor
 │
-├── HoneyDrunk.Data.EntityFramework/    # EF Core provider (relational)
+├── src/HoneyDrunk.Data.EntityFramework/    # EF Core provider (relational)
 │   ├── Context/                         # HoneyDrunkDbContext base
 │   ├── Diagnostics/                     # Command interceptor, health
 │   ├── Modeling/                        # Optional conventions
@@ -308,32 +313,32 @@ HoneyDrunk.Data/
 │   ├── Repositories/                    # EfRepository implementation
 │   └── Transactions/                    # EfUnitOfWork implementation
 │
-├── HoneyDrunk.Data.SqlServer/          # SQL Server specialization
+├── src/HoneyDrunk.Data.SqlServer/          # SQL Server specialization
 │   ├── Conventions/                     # Optional SQL Server conventions
 │   ├── Diagnostics/                     # SQL Server health contributor
 │   └── Registration/                    # SQL Server DI extensions
 │
-├── HoneyDrunk.Data.Migrations/         # Migration tooling
+├── src/HoneyDrunk.Data.Migrations/         # Migration tooling
 │   ├── Factories/                       # Design-time factory base
 │   └── Helpers/                         # Migration runner utilities
 │
-├── HoneyDrunk.Data.Outbox.Abstractions/ # Outbox contracts (no EF, no Transport)
+├── src/HoneyDrunk.Data.Outbox.Abstractions/ # Outbox contracts (no EF, no Transport)
 │   ├── IOutboxWriter, IOutboxReader     # Writer/reader interfaces
 │   ├── OutboxMessage                    # Message model with lease fields
 │   └── OutboxMessageStatus              # Pending → Leased → Dispatched / DeadLetter
 │
-├── HoneyDrunk.Data.Outbox/             # EF Core outbox persistence
+├── src/HoneyDrunk.Data.Outbox/             # EF Core outbox persistence
 │   ├── Persistence/                     # EfOutboxWriter, EfOutboxReader
 │   ├── Configuration/                   # Entity type configuration
 │   ├── Serialization/                   # Header serialization
 │   └── Registration/                    # AddHoneyDrunkDataOutbox<T>()
 │
-├── HoneyDrunk.Data.Outbox.Dispatcher/  # Background outbox dispatcher
+├── src/HoneyDrunk.Data.Outbox.Dispatcher/  # Background outbox dispatcher
 │   ├── OutboxDispatcherService          # BackgroundService poll/publish loop
 │   ├── OutboxDispatcherOptions          # Batch size, retry, lease config
 │   └── Registration/                    # AddOutboxDispatcher()
 │
-└── HoneyDrunk.Data.Testing/            # Test infrastructure (SQLite)
+└── src/HoneyDrunk.Data.Testing/            # Test infrastructure (SQLite)
     ├── Factories/                       # SQLite test factories
     ├── Fixtures/                        # xUnit fixtures
     └── Helpers/                         # Reset helpers, test doubles

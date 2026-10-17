@@ -6,16 +6,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 **Note:** See individual package CHANGELOGs for detailed changes:
-- [HoneyDrunk.Data.Abstractions CHANGELOG](HoneyDrunk.Data.Abstractions/CHANGELOG.md)
-- [HoneyDrunk.Data CHANGELOG](HoneyDrunk.Data/CHANGELOG.md)
-- [HoneyDrunk.Data.AspNetCore CHANGELOG](HoneyDrunk.Data.AspNetCore/CHANGELOG.md)
-- [HoneyDrunk.Data.EntityFramework CHANGELOG](HoneyDrunk.Data.EntityFramework/CHANGELOG.md)
-- [HoneyDrunk.Data.SqlServer CHANGELOG](HoneyDrunk.Data.SqlServer/CHANGELOG.md)
-- [HoneyDrunk.Data.Migrations CHANGELOG](HoneyDrunk.Data.Migrations/CHANGELOG.md)
-- [HoneyDrunk.Data.Outbox CHANGELOG](HoneyDrunk.Data.Outbox/CHANGELOG.md)
-- [HoneyDrunk.Data.Outbox.Abstractions CHANGELOG](HoneyDrunk.Data.Outbox.Abstractions/CHANGELOG.md)
-- [HoneyDrunk.Data.Outbox.Dispatcher CHANGELOG](HoneyDrunk.Data.Outbox.Dispatcher/CHANGELOG.md)
-- [HoneyDrunk.Data.Testing CHANGELOG](HoneyDrunk.Data.Testing/CHANGELOG.md)
+- [HoneyDrunk.Data.Abstractions CHANGELOG](../src/HoneyDrunk.Data.Abstractions/CHANGELOG.md)
+- [HoneyDrunk.Data CHANGELOG](../src/HoneyDrunk.Data/CHANGELOG.md)
+- [HoneyDrunk.Data.AspNetCore CHANGELOG](../src/HoneyDrunk.Data.AspNetCore/CHANGELOG.md)
+- [HoneyDrunk.Data.EntityFramework CHANGELOG](../src/HoneyDrunk.Data.EntityFramework/CHANGELOG.md)
+- [HoneyDrunk.Data.SqlServer CHANGELOG](../src/HoneyDrunk.Data.SqlServer/CHANGELOG.md)
+- [HoneyDrunk.Data.Migrations CHANGELOG](../src/HoneyDrunk.Data.Migrations/CHANGELOG.md)
+- [HoneyDrunk.Data.Outbox CHANGELOG](../src/HoneyDrunk.Data.Outbox/CHANGELOG.md)
+- [HoneyDrunk.Data.Outbox.Abstractions CHANGELOG](../src/HoneyDrunk.Data.Outbox.Abstractions/CHANGELOG.md)
+- [HoneyDrunk.Data.Outbox.Dispatcher CHANGELOG](../src/HoneyDrunk.Data.Outbox.Dispatcher/CHANGELOG.md)
+- [HoneyDrunk.Data.Testing CHANGELOG](../src/HoneyDrunk.Data.Testing/CHANGELOG.md)
 
 ---
 
