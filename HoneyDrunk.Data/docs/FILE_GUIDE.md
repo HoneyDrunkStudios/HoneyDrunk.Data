@@ -450,7 +450,7 @@ Applications using HoneyDrunk.Data:
 
 ### Official Documentation
 - [README.md](../../README.md) - Project overview and quick start
-- [CHANGELOG.md](../HoneyDrunk.Data/CHANGELOG.md) - Version history
+- [CHANGELOG.md](../../src/HoneyDrunk.Data/CHANGELOG.md) - Version history
 
 ### Related Projects
 - [HoneyDrunk.Kernel](https://github.com/HoneyDrunkStudios/HoneyDrunk.Kernel) - Core Grid primitives (required)
