@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+
+### Changed
+
+- Build with HoneyDrunk.Standards and HoneyDrunk.Standards.Tests 0.4.0, which add the architecture and comment analyzers. HoneyDrunk.Data.EntityFramework and HoneyDrunk.Data.Outbox set `HD_IsDataInfrastructure`, since they are the EF Core plumbing consumers' data services build on (HD0102 does not apply to them). No public API or package version change.
+
 ## [0.7.1] - 2026-09-26
 
 ### Changed
