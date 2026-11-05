@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Update HoneyDrunk.Standards and HoneyDrunk.Standards.Tests to 0.4.1 to consume the architecture analyzer and TODO issue-link fixes.
+
 ### Changed
 
 - Build with HoneyDrunk.Standards and HoneyDrunk.Standards.Tests 0.4.0, which add the architecture and comment analyzers. HoneyDrunk.Data.EntityFramework and HoneyDrunk.Data.Outbox set `HD_IsDataInfrastructure`, since they are the EF Core plumbing consumers' data services build on (HD0102 does not apply to them). No public API or package version change.
