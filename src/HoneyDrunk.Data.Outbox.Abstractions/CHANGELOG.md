@@ -1,5 +1,37 @@
 # Changelog - HoneyDrunk.Data.Outbox.Abstractions
 
+## [0.7.2] - 2026-11-05
+
+### Changed
+
+- Refresh NuGet dependencies and adopt upstream package releases in dependency order. Preserve target frameworks and public contracts.
+
+| Dependency | Previous | Updated |
+| --- | --- | --- |
+| HoneyDrunk.Kernel | 0.8.1 | 0.8.2 |
+| HoneyDrunk.Kernel.Abstractions | 0.8.1 | 0.8.2 |
+| HoneyDrunk.Standards | 0.4.0 | 0.4.3 |
+| HoneyDrunk.Standards.Tests | 0.4.0 | 0.4.3 |
+| HoneyDrunk.Transport | 0.7.2 | 0.7.3 |
+| HoneyDrunk.Vault | 0.8.1 | 0.8.2 |
+| HoneyDrunk.Vault.EventGrid | 0.8.1 | 0.8.2 |
+| HoneyDrunk.Vault.Providers.AppConfiguration | 0.8.1 | 0.8.2 |
+| HoneyDrunk.Vault.Providers.AzureKeyVault | 0.8.1 | 0.8.2 |
+| Microsoft.CodeAnalysis.NetAnalyzers | 10.0.401 | 10.0.403 |
+| Microsoft.EntityFrameworkCore | 10.0.12 | 10.0.14 |
+| Microsoft.EntityFrameworkCore.Design | 10.0.12 | 10.0.14 |
+| Microsoft.EntityFrameworkCore.InMemory | 10.0.12 | 10.0.14 |
+| Microsoft.EntityFrameworkCore.Relational | 10.0.12 | 10.0.14 |
+| Microsoft.EntityFrameworkCore.SqlServer | 10.0.12 | 10.0.14 |
+| Microsoft.EntityFrameworkCore.Sqlite | 10.0.12 | 10.0.14 |
+| Microsoft.Extensions.DependencyInjection | 10.0.12 | 10.0.14 |
+| Microsoft.Extensions.DependencyInjection.Abstractions | 10.0.12 | 10.0.14 |
+| Microsoft.Extensions.Hosting | 10.0.12 | 10.0.14 |
+| Microsoft.Extensions.Hosting.Abstractions | 10.0.12 | 10.0.14 |
+| Microsoft.Extensions.Logging.Abstractions | 10.0.12 | 10.0.14 |
+| Microsoft.Extensions.Options | 10.0.12 | 10.0.14 |
+| System.Security.Cryptography.Pkcs | 10.0.13 | 10.0.14 |
+
 ## [0.7.1] - 2026-09-26
 
 ### Changed
