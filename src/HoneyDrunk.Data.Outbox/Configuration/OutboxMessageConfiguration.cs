@@ -13,6 +13,8 @@ namespace HoneyDrunk.Data.Outbox.Configuration;
 /// Apply via <see cref="ModelBuilderExtensions.ApplyOutboxConfiguration"/> in your
 /// DbContext's <c>OnModelCreating</c>.
 /// </remarks>
+/// <param name="schema">The SQL schema containing the outbox table.</param>
+/// <param name="tableName">The outbox table name.</param>
 public sealed class OutboxMessageConfiguration(
     string schema = "outbox",
     string tableName = "OutboxMessages") : IEntityTypeConfiguration<OutboxMessage>

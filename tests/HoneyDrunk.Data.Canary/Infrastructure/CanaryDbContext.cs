@@ -7,6 +7,7 @@ namespace HoneyDrunk.Data.Canary.Infrastructure;
 /// <summary>
 /// Minimal DbContext for canary outbox tests. SQLite-backed with DateTimeOffset converters.
 /// </summary>
+/// <param name="options">The EF Core options for this test context.</param>
 public sealed class CanaryDbContext(DbContextOptions<CanaryDbContext> options) : DbContext(options)
 {
     public DbSet<OutboxMessage> OutboxMessages => Set<OutboxMessage>();
