@@ -14,6 +14,9 @@ namespace HoneyDrunk.Data.Outbox.Persistence;
 /// persisted atomically with domain state on the next <c>SaveChangesAsync</c>.
 /// </summary>
 /// <typeparam name="TContext">The application's DbContext type.</typeparam>
+/// <param name="dbContext">The scoped EF Core persistence context.</param>
+/// <param name="operationContextAccessor">The accessor for the current operation context.</param>
+/// <param name="options">The configured component options.</param>
 public sealed class EfOutboxWriter<TContext>(
     TContext dbContext,
     IOperationContextAccessor operationContextAccessor,

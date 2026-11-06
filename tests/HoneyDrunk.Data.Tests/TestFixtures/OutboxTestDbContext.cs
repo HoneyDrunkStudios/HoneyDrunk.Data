@@ -10,6 +10,7 @@ namespace HoneyDrunk.Data.Tests.TestFixtures;
 /// <summary>
 /// Minimal DbContext for outbox persistence tests.
 /// </summary>
+/// <param name="options">The EF Core options for this test context.</param>
 public sealed class OutboxTestDbContext(DbContextOptions<OutboxTestDbContext> options) : DbContext(options)
 {
     public DbSet<OutboxMessage> OutboxMessages => Set<OutboxMessage>();

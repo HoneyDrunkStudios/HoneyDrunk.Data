@@ -28,6 +28,8 @@ namespace HoneyDrunk.Data.Outbox.Persistence;
 /// provider-specific reader that uses <c>READPAST</c> / <c>UPDLOCK</c> hints.
 /// </para>
 /// </remarks>
+/// <param name="dbContext">The scoped EF Core persistence context.</param>
+/// <param name="logger">The logger for this component.</param>
 public sealed class EfOutboxReader<TContext>(
     TContext dbContext,
     ILogger<EfOutboxReader<TContext>> logger) : IOutboxReader

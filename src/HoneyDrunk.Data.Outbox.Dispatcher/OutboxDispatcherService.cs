@@ -33,6 +33,9 @@ namespace HoneyDrunk.Data.Outbox.Dispatcher;
 /// the retry limit are moved to <see cref="OutboxMessageStatus.DeadLetter"/>.
 /// </para>
 /// </remarks>
+/// <param name="scopeFactory">The factory for a scoped outbox dispatch operation.</param>
+/// <param name="options">The configured component options.</param>
+/// <param name="logger">The logger for this component.</param>
 public sealed class OutboxDispatcherService(
     IServiceScopeFactory scopeFactory,
     IOptions<OutboxDispatcherOptions> options,
