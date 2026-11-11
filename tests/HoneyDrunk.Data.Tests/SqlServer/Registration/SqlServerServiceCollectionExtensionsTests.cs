@@ -167,6 +167,21 @@ public sealed class SqlServerServiceCollectionExtensionsTests
         Assert.All(secretStore.RequestedIdentifiers, identifier => Assert.Equal("Sql--DefaultConnection", identifier.Name));
     }
 
+    [Fact]
+    public void AddHoneyDrunkDataSqlServer_PreservesSqlServer2019QueryCompatibility()
+    {
+        var services = new ServiceCollection();
+        services.AddSingleton<ISecretStore>(new RotatingSecretStore("Server=test;Database=test"));
+        services.AddHoneyDrunkDataSqlServer<TestDbContext>(options => options.UseConnectionPurpose("Default"));
+        using var provider = services.BuildServiceProvider();
+        using var context = provider.GetRequiredService<TestDbContext>();
+
+        var sql = context.TestEntities.Select(entity => Math.Min(entity.Name.Length, 10)).ToQueryString();
+
+        Assert.Contains("LEN(", sql, StringComparison.Ordinal);
+        Assert.DoesNotContain("LEAST(", sql, StringComparison.Ordinal);
+    }
+
     private static string GetServerName(string connectionString)
     {
         var start = connectionString.IndexOf("Server=", StringComparison.Ordinal);
