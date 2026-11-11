@@ -5,6 +5,18 @@ All notable changes to HoneyDrunk.Data.EntityFramework will be documented in thi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.8.0] - 2026-11-11
+
+### Added
+
+- Optional `IBoundedReadOnlyRepository<TEntity>` with typed ordering keys and a positive root-row limit applied by the persistence provider before materialization. The EF implementation preserves existing tracking and model loading behavior and performs no count-then-fetch step.
+- SQLite regressions for source SQL limits, ordering/ties, explicit tenant filters, cancellation, untranslatable queries, concurrent inserts, and AutoInclude/split-query behavior.
+
+### Changed
+
+- Runtime packages require .NET 11; abstraction packages retain .NET 10 and add .NET 11. This release includes the .NET 11/EF Core 11 upgrade already on main, including SQL Server compatibility level 150 and the Azure authentication extension.
+- Existing repository methods and interfaces remain unchanged. The new capability bounds root matches, not eager-loaded graphs, SQL command count or database scan/sort work.
+
 ## [0.7.2] - 2026-11-05
 
 ### Changed

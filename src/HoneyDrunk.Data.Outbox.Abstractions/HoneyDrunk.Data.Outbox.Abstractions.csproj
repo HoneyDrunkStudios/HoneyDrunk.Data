@@ -9,10 +9,10 @@
 
     <!-- Package Metadata -->
     <PackageId>HoneyDrunk.Data.Outbox.Abstractions</PackageId>
-    <Version>0.7.2</Version>
+    <Version>0.8.0</Version>
     <Authors>HoneyDrunk Studios</Authors>
     <Description>Pure outbox contracts for HoneyDrunk.Data. Defines IOutboxWriter, IOutboxReader, IOutboxDispatcher, and the OutboxMessage model with lease-based concurrency. No EF Core, SQL, or Transport dependencies.</Description>
-    <PackageReleaseNotes>v0.7.2: Refresh NuGet dependencies and adopt published upstream packages; preserve target frameworks and public contracts.</PackageReleaseNotes>
+    <PackageReleaseNotes>v0.8.0: Target .NET 11 runtimes and add optional source-bounded ordered repository reads. Abstractions retain .NET 10 support.</PackageReleaseNotes>
     <PackageTags>data;outbox;transactional-outbox;abstractions;contracts;kernel;grid</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
