@@ -1,5 +1,11 @@
 # Changelog - HoneyDrunk.Data.Outbox.Abstractions
 
+## [0.8.0] - 2026-11-11
+
+### Changed
+
+- Retain .NET 10 support and add .NET 11 in the coordinated Data 0.8.0 release. Existing outbox contracts are unchanged.
+
 ## [0.7.2] - 2026-11-05
 
 ### Changed

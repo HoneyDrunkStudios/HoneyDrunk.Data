@@ -1,5 +1,11 @@
 # Changelog - HoneyDrunk.Data.Outbox
 
+## [0.8.0] - 2026-11-11
+
+### Changed
+
+- Require .NET 11 and adopt the coordinated Data 0.8.0 dependencies. Existing package responsibilities and public contracts are unchanged.
+
 ## [0.7.2] - 2026-11-05
 
 ### Changed
