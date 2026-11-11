@@ -13,10 +13,12 @@ namespace HoneyDrunk.Data.Tests.EntityFramework.Repositories;
 
 public sealed class EfBoundedRepositoryTests : IAsyncDisposable
 {
+    private static readonly string[] LegacyReadMethodNames = ["CountAsync", "ExistsAsync", "FindAsync", "FindByIdAsync", "FindOneAsync"];
+
     private readonly SqliteConnection _connection = new("Data Source=:memory:");
     private readonly QueryObserver _observer = new();
     private readonly TestDbContext _context;
-    private readonly IBoundedReadOnlyRepository<TestEntity> _repository;
+    private readonly EfRepository<TestEntity, TestDbContext> _repository;
 
     public EfBoundedRepositoryTests()
     {
@@ -39,9 +41,9 @@ public sealed class EfBoundedRepositoryTests : IAsyncDisposable
         var rows = await _repository.FindOrderedAsync(
             row => row.TenantId == "included", row => row.Name, row => row.Id, 5, descending);
 
-        var expectedNames = descending
-            ? new[] { "099", "099", "098", "098", "097" }
-            : new[] { "000", "000", "001", "001", "002" };
+        string[] expectedNames = descending
+            ? ["099", "099", "098", "098", "097"]
+            : ["000", "000", "001", "001", "002"];
         Assert.Equal(expectedNames, rows.Select(row => row.Name));
         var tiedIds = rows.Take(2).Select(row => row.Id).ToArray();
         Assert.Equal(descending ? tiedIds.OrderDescending() : tiedIds.Order(), tiedIds);
@@ -131,8 +133,9 @@ public sealed class EfBoundedRepositoryTests : IAsyncDisposable
     public void OptionalCapability_DoesNotAddMembersToExistingRepositoryInterfaces()
     {
         Assert.Equal(
-            new[] { "CountAsync", "ExistsAsync", "FindAsync", "FindByIdAsync", "FindOneAsync" },
+            LegacyReadMethodNames,
             typeof(IReadOnlyRepository<TestEntity>).GetMethods().Select(method => method.Name).Order());
+        Assert.IsAssignableFrom<IBoundedReadOnlyRepository<TestEntity>>(_repository);
         Assert.DoesNotContain(typeof(IBoundedReadOnlyRepository<TestEntity>), typeof(IRepository<TestEntity>).GetInterfaces());
     }
 
@@ -142,7 +145,7 @@ public sealed class EfBoundedRepositoryTests : IAsyncDisposable
         await _connection.DisposeAsync();
     }
 
-    private static string ReverseName(string name) => new(name.Reverse().ToArray());
+    private static string ReverseName(string name) => string.Concat(name.Reverse());
 
     private async Task SeedAsync()
     {
