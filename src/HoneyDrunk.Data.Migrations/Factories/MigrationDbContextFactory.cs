@@ -92,6 +92,9 @@ public abstract class MigrationDbContextFactory<TContext> : IDesignTimeDbContext
 
         optionsBuilder.UseSqlServer(connectionString, sqlOptions =>
         {
+            // Match the runtime SQL Server provider rather than EF 11's new default.
+            sqlOptions.UseCompatibilityLevel(150);
+
             if (!string.IsNullOrEmpty(MigrationsAssembly))
             {
                 sqlOptions.MigrationsAssembly(MigrationsAssembly);

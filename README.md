@@ -1,5 +1,19 @@
 # HoneyDrunk.Data
 
+## .NET 11 upgrade
+
+The repository targets .NET 11 and selects SDK 11.0.100 through `global.json` (stable patch roll-forward). Install a matching SDK before restoring, building or testing. Runtime consumer applications must target .NET 11 or newer when adopting packages built from this source. Pure abstractions packages retain .NET 10 and add .NET 11 targets where present. Existing published HoneyDrunk dependency versions remain unchanged until their coordinated release.
+
+Framework-aligned packages use 11.0.0; independently versioned Azure, identity, resilience and analyzer packages keep their existing versions. Public contracts and serialization settings are unchanged. The runtime and ASP.NET Core improvements apply without opting into experimental APIs or changing the test runner.
+
+See the official [.NET 11 release](https://devblogs.microsoft.com/dotnet/announcing-dotnet-11/) and [breaking changes](https://learn.microsoft.com/dotnet/core/compatibility/11) before rollout.
+
+### EF Core and SQL compatibility
+
+EF Core packages move together to 11.0.0. SQL Server registration and the migration factory explicitly retain compatibility level 150, so the SDK upgrade does not silently require SQL Server 2022. Azure SQL retains its separate provider configuration. `Microsoft.Data.SqlClient.Extensions.Azure` preserves Entra ID authentication after SqlClient 7 split it out of the core package. No schema migrations are introduced.
+
+EF Core 11 now rejects `MigrateAsync` when no migrations exist. Call `EnsureDatabaseAsync` only for the existing development/test create-database workflow; production migration callers must supply their migrations assembly. Review the [EF Core 11 breaking changes](https://learn.microsoft.com/ef/core/what-is-new/ef-core-11.0/breaking-changes), and validate real SQL/Azure credentials and database compatibility in the deployment environment.
+
 ## Repository layout
 
 Open `HoneyDrunk.Data.slnx` from the repository root. Production projects live in `src/`, test and canary projects in `tests/`, and examples in `samples/` where present. Shared build configuration stays at the root; project names, namespaces and package identities are unchanged. Existing documentation and release-history locations are retained.
@@ -7,7 +21,7 @@ Open `HoneyDrunk.Data.slnx` from the repository root. Production projects live i
 
 [![PR](https://github.com/HoneyDrunkStudios/HoneyDrunk.Data/actions/workflows/pr.yml/badge.svg)](https://github.com/HoneyDrunkStudios/HoneyDrunk.Data/actions/workflows/pr.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![.NET 10](https://img.shields.io/badge/.NET-10.0-512BD4)](https://dotnet.microsoft.com/download/dotnet/10.0)
+[![.NET 11](https://img.shields.io/badge/.NET-11.0-512BD4)](https://dotnet.microsoft.com/download/dotnet/11.0)
 
 > **Persistence conventions for HoneyDrunk.OS** — Repository patterns, tenant-aware data access, transactional outbox, and EF Core implementation for the Grid.
 

@@ -40,6 +40,15 @@ public sealed class MigrationRunnerTests : IAsyncDisposable
     }
 
     [Fact]
+    public async Task ApplyMigrationsAsync_WithoutMigrations_ThrowsInvalidOperationException()
+    {
+        var exception = await Assert.ThrowsAsync<InvalidOperationException>(
+            () => MigrationRunner.ApplyMigrationsAsync(_context));
+
+        Assert.Contains("MigrationsNotFound", exception.Message, StringComparison.Ordinal);
+    }
+
+    [Fact]
     public async Task GetPendingMigrationsAsync_WithNullContext_ThrowsArgumentNullException()
     {
         await Assert.ThrowsAsync<ArgumentNullException>(

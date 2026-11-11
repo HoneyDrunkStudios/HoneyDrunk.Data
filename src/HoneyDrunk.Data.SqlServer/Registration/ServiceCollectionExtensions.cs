@@ -116,6 +116,9 @@ public static class ServiceCollectionExtensions
         SqlServerDbContextOptionsBuilder providerOptions,
         SqlServerDataOptions sqlOptions)
     {
+        // Preserve SQL Server 2019 compatibility when upgrading to EF Core 11.
+        providerOptions.UseCompatibilityLevel(150);
+
         if (sqlOptions.EnableRetryOnFailure)
         {
             providerOptions.EnableRetryOnFailure(
