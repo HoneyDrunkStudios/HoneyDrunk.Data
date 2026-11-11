@@ -135,7 +135,7 @@ public sealed class EfBoundedRepositoryTests : IAsyncDisposable
         Assert.Equal(
             LegacyReadMethodNames,
             typeof(IReadOnlyRepository<TestEntity>).GetMethods().Select(method => method.Name).Order());
-        Assert.IsAssignableFrom<IBoundedReadOnlyRepository<TestEntity>>(_repository);
+        Assert.IsType<IBoundedReadOnlyRepository<TestEntity>>(_repository, exactMatch: false);
         Assert.DoesNotContain(typeof(IBoundedReadOnlyRepository<TestEntity>), typeof(IRepository<TestEntity>).GetInterfaces());
     }
 
