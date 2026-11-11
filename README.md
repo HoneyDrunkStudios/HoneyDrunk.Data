@@ -420,3 +420,25 @@ This project is licensed under the [MIT License](LICENSE).
 [GitHub](https://github.com/HoneyDrunkStudios/HoneyDrunk.Data) • [Issues](https://github.com/HoneyDrunkStudios/HoneyDrunk.Data/issues)
 
 </div>
+
+### Bounded ordered reads
+
+`IBoundedReadOnlyRepository<TEntity>` is an optional capability implemented by
+`EfRepository<TEntity, TContext>`. Existing `IReadOnlyRepository<TEntity>` and
+`IRepository<TEntity>` contracts are unchanged. Check the capability on the
+repository returned by the unit of work; do not replace it with `FindAsync` when
+bounded reads are required.
+
+`FindOrderedAsync(predicate, orderBy, tieBreaker, limit, descending)` executes
+filtering, both ordering keys, and the positive limit in one logical provider query before
+materializing matching root entities. Both keys use the same direction. Choose keys that jointly
+uniquely order matches, and include tenant filtering explicitly. Comparison and
+collation follow the database. EF query translation errors propagate without
+client-evaluation fallback. Existing tracking behavior is preserved.
+
+This bounds returned/materialized root entities, not related graphs, SQL command
+count or the cost of a database scan/sort. Model-configured eager loading, owned
+navigations and split-query behavior are preserved. A graph may therefore load
+more related entities and require additional commands. Appropriate indexes remain the host's responsibility. Each call follows the
+transaction's isolation level; calls do not promise a shared snapshot. There is
+no count-then-read step whose bound can race with inserts.

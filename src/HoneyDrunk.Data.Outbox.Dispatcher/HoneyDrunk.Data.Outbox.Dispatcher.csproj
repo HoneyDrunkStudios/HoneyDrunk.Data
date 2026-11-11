@@ -8,10 +8,10 @@
 
     <!-- Package Metadata -->
     <PackageId>HoneyDrunk.Data.Outbox.Dispatcher</PackageId>
-    <Version>0.7.2</Version>
+    <Version>0.8.0</Version>
     <Authors>HoneyDrunk Studios</Authors>
     <Description>Background dispatcher for the HoneyDrunk.Data transactional outbox. Polls pending messages and publishes them through HoneyDrunk.Transport abstractions with lease-based concurrency, configurable retry, and exponential backoff. Adapter-agnostic — references no specific message bus.</Description>
-    <PackageReleaseNotes>v0.7.2: Refresh NuGet dependencies and adopt published upstream packages; preserve target frameworks and public contracts.</PackageReleaseNotes>
+    <PackageReleaseNotes>v0.8.0: Target .NET 11 runtimes and add optional source-bounded ordered repository reads. Abstractions retain .NET 10 support.</PackageReleaseNotes>
     <PackageTags>data;outbox;dispatcher;background-service;transport;retry;kernel;grid</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>

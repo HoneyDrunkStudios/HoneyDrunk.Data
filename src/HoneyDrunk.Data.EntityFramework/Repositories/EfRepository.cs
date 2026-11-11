@@ -13,7 +13,7 @@ namespace HoneyDrunk.Data.EntityFramework.Repositories;
 /// </summary>
 /// <typeparam name="TEntity">The entity type.</typeparam>
 /// <typeparam name="TContext">The DbContext type.</typeparam>
-public class EfRepository<TEntity, TContext> : IRepository<TEntity>
+public class EfRepository<TEntity, TContext> : IRepository<TEntity>, IBoundedReadOnlyRepository<TEntity>
     where TEntity : class
     where TContext : DbContext
 {
@@ -57,6 +57,30 @@ public class EfRepository<TEntity, TContext> : IRepository<TEntity>
             .Where(predicate)
             .ToListAsync(cancellationToken)
             .ConfigureAwait(false);
+    }
+
+    /// <inheritdoc />
+    public virtual async Task<IReadOnlyList<TEntity>> FindOrderedAsync<TOrderKey, TTieBreaker>(
+        Expression<Func<TEntity, bool>> predicate,
+        Expression<Func<TEntity, TOrderKey>> orderBy,
+        Expression<Func<TEntity, TTieBreaker>> tieBreaker,
+        int limit,
+        bool descending = false,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(predicate);
+        ArgumentNullException.ThrowIfNull(orderBy);
+        ArgumentNullException.ThrowIfNull(tieBreaker);
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(limit);
+        cancellationToken.ThrowIfCancellationRequested();
+
+        using var activity = DataActivitySource.StartRepositoryActivity(typeof(TEntity).Name, "FindOrdered");
+        var matches = DbSet.Where(predicate);
+        var ordered = descending
+            ? matches.OrderByDescending(orderBy).ThenByDescending(tieBreaker)
+            : matches.OrderBy(orderBy).ThenBy(tieBreaker);
+
+        return await ordered.Take(limit).ToListAsync(cancellationToken).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
